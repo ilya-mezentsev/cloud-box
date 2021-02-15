@@ -1,4 +1,4 @@
-## Box API
+## Box API overview
 
 ### Errors
 Each API response can contains error in format:

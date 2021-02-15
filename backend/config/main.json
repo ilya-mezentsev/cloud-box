@@ -1,0 +1,22 @@
+{
+  "server": {
+    "port": 8000,
+    "domain": "localhost",
+    "secure_cookie": false
+  },
+  "db": {
+    "host": "db",
+    "port": 5555,
+    "user": "cloud-box",
+    "password": "password",
+    "db_name": "cloud_box"
+  },
+  "auth": {
+    "basic": {
+      "box": {
+        "user": "foo-bar",
+        "password": "password-baz"
+      }
+    }
+  }
+}
