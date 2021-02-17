@@ -6,7 +6,7 @@
   },
   "db": {
     "host": "db",
-    "port": 5555,
+    "port": 5432,
     "user": "cloud-box",
     "password": "password",
     "db_name": "cloud_box"
