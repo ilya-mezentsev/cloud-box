@@ -1,6 +1,8 @@
 ROOT_DIR := $(shell dirname $(realpath $(lastword $(MAKEFILE_LIST))))
 BOX_DIR := $(ROOT_DIR)/cbox
 BACKEND_DIR := $(ROOT_DIR)/backend
+FRONTEND_DIR := $(ROOT_DIR)/frontend
+PROJECT_NAME = "cloud_box"
 
 BOX_MANIFEST_FILE := $(BOX_DIR)/Cargo.toml
 DEVICES_MOUNT_ROOT := $(ROOT_DIR)/tmp-data
@@ -8,6 +10,10 @@ DEVICES_MOUNT_ROOT := $(ROOT_DIR)/tmp-data
 BACKEND_CONFIG_PATH := $(BACKEND_DIR)/config/main.json
 BACKEND_LIBS_PATH := $(BACKEND_DIR)/libs
 BACKEND_SOURCE_PATH := $(BACKEND_DIR)/source
+
+build: backend-build frontend-build containers-build
+
+run: containers-run
 
 box-run:
 	DEVICES_MOUNT_ROOT=$(DEVICES_MOUNT_ROOT) cargo run --manifest-path $(BOX_MANIFEST_FILE)
@@ -23,6 +29,9 @@ box-fmt:
 
 box-calc-lines:
 	( find $(BOX_DIR)/src/ -name '*.rs' -print0 | xargs -0 cat ) | wc -l
+
+backend-build:
+	unset GOPATH && cd $(BACKEND_DIR) && go build main.go
 
 backend-run:
 	unset GOPATH && cd $(BACKEND_DIR) && go run main.go -config $(BACKEND_CONFIG_PATH)
@@ -41,3 +50,12 @@ backend-calc-lines:
 
 db-run:
 	docker-compose -f $(ROOT_DIR)/docker-compose.yaml up db
+
+frontend-build:
+	cd $(FRONTEND_DIR) && npm i && npm run build
+
+containers-run:
+	cd $(ROOT_DIR) && docker-compose -p $(PROJECT_NAME) up
+
+containers-build:
+	cd $(ROOT_DIR) && docker-compose -p $(PROJECT_NAME) build
