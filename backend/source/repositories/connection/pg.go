@@ -14,7 +14,7 @@ func MustGetConnection(c config.DBConfigsRepository) *sqlx.DB {
 	for tryCount <= c.DBConnectionRetriesCount() {
 		tryCount++
 
-		db, err := sqlx.Open("postgres", buildPostgresString(c))
+		db, err := sqlx.Open("postgres", BuildPostgresString(c))
 		if err != nil {
 			logger.WarningF("Unable to connect to DB. Try number: %d", tryCount)
 			time.Sleep(time.Second * time.Duration(c.DBConnectionRetryTimeout()))
@@ -26,7 +26,7 @@ func MustGetConnection(c config.DBConfigsRepository) *sqlx.DB {
 	panic(fmt.Errorf("unable to connect to DB. retry count: %d", tryCount))
 }
 
-func buildPostgresString(c config.DBConfigsRepository) string {
+func BuildPostgresString(c config.DBConfigsRepository) string {
 	return fmt.Sprintf(
 		"host=%s port=%d user=%s password=%s dbname=%s sslmode=disable",
 		c.DBHost(),
