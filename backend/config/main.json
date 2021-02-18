@@ -1,15 +1,17 @@
 {
   "server": {
-    "port": 8000,
+    "port": 8080,
     "domain": "localhost",
     "secure_cookie": false
   },
   "db": {
     "host": "db",
-    "port": 5555,
+    "port": 5432,
     "user": "cloud-box",
     "password": "password",
-    "db_name": "cloud_box"
+    "db_name": "cloud_box",
+    "connection_retries_count": 5,
+    "connection_retry_timeout": 5
   },
   "auth": {
     "basic": {

@@ -7,6 +7,7 @@ import (
 	sessionControllerConstructor "cloud-box-backend/source/controllers/session"
 	boxRepositoryConstructor "cloud-box-backend/source/repositories/box"
 	"cloud-box-backend/source/repositories/connection"
+	"cloud-box-backend/source/repositories/schema"
 	userRepositoryConstructor "cloud-box-backend/source/repositories/user"
 	boxServiceConstructor "cloud-box-backend/source/services/box"
 	boxRegistrationServiceConstructor "cloud-box-backend/source/services/registration/box"
@@ -16,7 +17,6 @@ import (
 	"flag"
 	"fmt"
 	"github.com/gin-gonic/gin"
-	"github.com/jmoiron/sqlx"
 	"os"
 )
 
@@ -43,7 +43,8 @@ func init() {
 
 	configsRepository = config.MustNew(*configFilePath)
 
-	db := sqlx.MustOpen("postgres", connection.BuildPostgresString(configsRepository))
+	db := connection.MustGetConnection(configsRepository)
+	db.MustExec(schema.Schema)
 
 	userRepository = userRepositoryConstructor.New(db)
 	boxRepository = boxRepositoryConstructor.New(db)

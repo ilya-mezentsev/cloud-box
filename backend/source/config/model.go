@@ -8,11 +8,13 @@ type (
 	}
 
 	db struct {
-		Host     string `json:"host"`
-		Port     int    `json:"port"`
-		User     string `json:"user"`
-		Password string `json:"password"`
-		DBName   string `json:"db_name"`
+		Host                   string `json:"host"`
+		Port                   int    `json:"port"`
+		User                   string `json:"user"`
+		Password               string `json:"password"`
+		DBName                 string `json:"db_name"`
+		ConnectionRetriesCount int    `json:"connection_retries_count"`
+		ConnectionRetryTimeout int    `json:"connection_retry_timeout"`
 	}
 
 	settings struct {
