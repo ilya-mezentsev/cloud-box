@@ -65,3 +65,11 @@ func (r Repository) DBPassword() string {
 func (r Repository) DBName() string {
 	return r.s.DB.DBName
 }
+
+func (r Repository) DBConnectionRetriesCount() int {
+	return r.s.DB.ConnectionRetriesCount
+}
+
+func (r Repository) DBConnectionRetryTimeout() int {
+	return r.s.DB.ConnectionRetryTimeout
+}

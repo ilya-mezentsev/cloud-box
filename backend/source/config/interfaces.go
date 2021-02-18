@@ -13,5 +13,7 @@ type (
 		DBUser() string
 		DBPassword() string
 		DBName() string
+		DBConnectionRetriesCount() int
+		DBConnectionRetryTimeout() int
 	}
 )

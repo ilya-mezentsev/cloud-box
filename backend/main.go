@@ -17,8 +17,6 @@ import (
 	"flag"
 	"fmt"
 	"github.com/gin-gonic/gin"
-	"github.com/jmoiron/sqlx"
-	_ "github.com/lib/pq"
 	"os"
 )
 
@@ -45,7 +43,7 @@ func init() {
 
 	configsRepository = config.MustNew(*configFilePath)
 
-	db := sqlx.MustOpen("postgres", connection.BuildPostgresString(configsRepository))
+	db := connection.MustGetConnection(configsRepository)
 	db.MustExec(schema.Schema)
 
 	userRepository = userRepositoryConstructor.New(db)
