@@ -39,7 +39,7 @@ mod test {
         assert_eq!("error", response_data.status);
         assert_eq!(
             "No such file or directory (os error 2)",
-            response_data.description
+            response_data.data.description
         );
     }
 

@@ -15,6 +15,11 @@ pub struct OkResponse<T: Serialize> {
 #[derive(Serialize, Deserialize)]
 pub struct ErrorResponse {
     pub status: String,
+    pub data: ErrorResponseData,
+}
+
+#[derive(Serialize, Deserialize)]
+pub struct ErrorResponseData {
     pub description: String,
 }
 
