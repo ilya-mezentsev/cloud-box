@@ -16,7 +16,7 @@ mod tests {
 
         assert_eq!(200, res.status_code);
         assert_eq!("error", err.status);
-        assert_eq!("Param file_path or disk_name is missing", err.description);
+        assert_eq!("Param file_path or disk_name is missing", err.data.description);
     }
 
     #[test]
@@ -36,7 +36,7 @@ mod tests {
         assert_eq!("error", response_data.status);
         assert_eq!(
             "No such file or directory (os error 2)",
-            response_data.description
+            response_data.data.description
         );
     }
 

@@ -5,7 +5,9 @@ Each API response can contains error in format:
 ```json5
 {
   "status": "error",
-  "description": "Some error description"
+  "data": {
+    "description": "Some error description"
+  }
 }
 ```
 

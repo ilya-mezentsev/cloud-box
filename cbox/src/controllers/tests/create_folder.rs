@@ -37,7 +37,7 @@ mod tests {
 
         assert_eq!(200, res.status_code);
         assert_eq!("error", response_data.status);
-        assert_eq!("File exists (os error 17)", response_data.description);
+        assert_eq!("File exists (os error 17)", response_data.data.description);
     }
 
     #[test]

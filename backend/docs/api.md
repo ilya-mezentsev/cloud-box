@@ -103,6 +103,12 @@ Each API response can contains error in format:
   "box_uuid": "c4f81f0d-60e0-44d0-976c-bac385fe6ae9",
 }
 ```
+#### Ok response:
+```json5
+{
+  "status": "ok"
+}
+```
 #### Error codes:
 * validation-error - at least one provided field value is invalid
 * repository-error - DB error (should not happen)

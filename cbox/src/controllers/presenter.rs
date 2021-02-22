@@ -1,7 +1,7 @@
 use std::error::Error;
 use std::fs::File;
 
-use crate::models::responses::{DefaultOkResponse, ErrorResponse, FileResponse, OkResponse};
+use crate::models::responses::{DefaultOkResponse, ErrorResponse, ErrorResponseData, FileResponse, OkResponse};
 use serde::Serialize;
 
 pub fn make_response<T: Serialize>(res: Result<T, Box<dyn Error>>) -> rouille::Response {
@@ -11,18 +11,22 @@ pub fn make_response<T: Serialize>(res: Result<T, Box<dyn Error>>) -> rouille::R
             data,
         }),
 
-        Err(e) => rouille::Response::json(&ErrorResponse {
+        Err(err) => rouille::Response::json(&ErrorResponse {
             status: String::from("error"),
-            description: e.to_string(),
+            data: ErrorResponseData{
+                description: err.to_string(),
+            }
         }),
     }
 }
 
 pub fn make_default_response(err: Option<Box<dyn Error>>) -> rouille::Response {
     match err {
-        Some(e) => rouille::Response::json(&ErrorResponse {
+        Some(err) => rouille::Response::json(&ErrorResponse {
             status: String::from("error"),
-            description: e.to_string(),
+            data: ErrorResponseData{
+                description: err.to_string(),
+            }
         }),
 
         None => rouille::Response::json(&DefaultOkResponse {
@@ -37,7 +41,9 @@ pub fn make_response_from_file(res: Result<FileResponse, Box<dyn Error>>) -> rou
 
         Err(err) => rouille::Response::json(&ErrorResponse {
             status: String::from("error"),
-            description: err.to_string(),
+            data: ErrorResponseData{
+                description: err.to_string(),
+            }
         }),
     }
 }
@@ -49,7 +55,9 @@ fn _make_response_from_file(res: FileResponse) -> rouille::Response {
 
         Err(err) => rouille::Response::json(&ErrorResponse {
             status: String::from("error"),
-            description: err.to_string(),
+            data: ErrorResponseData{
+                description: err.to_string(),
+            }
         }),
     }
 }
@@ -57,6 +65,8 @@ fn _make_response_from_file(res: FileResponse) -> rouille::Response {
 pub fn make_missing_param_response(param_name: &str) -> rouille::Response {
     rouille::Response::json(&ErrorResponse {
         status: String::from("error"),
-        description: format!("Param {} is missing", param_name),
+        data: ErrorResponseData{
+            description: format!("Param {} is missing", param_name),
+        }
     })
 }
