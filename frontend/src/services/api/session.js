@@ -23,7 +23,7 @@ class SessionResponse extends SuccessResponse {
  * @param {string} password
  * @return {Promise<SessionResponse | ErrorResponse>}
  */
-export async function signIn({mail, password}) {
+export async function createSession({mail, password}) {
     const response = await POST({
         path: 'session',
         body: {mail, password},
@@ -36,7 +36,7 @@ export async function signIn({mail, password}) {
  *
  * @return {Promise<SuccessResponse | ErrorResponse>}
  */
-export async function signOut() {
+export async function deleteSession() {
     const response = await DELETE({
         path: 'session',
     });
