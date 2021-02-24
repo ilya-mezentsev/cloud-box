@@ -64,6 +64,7 @@ func TestService_BindBoxWithAccountSuccess(t *testing.T) {
 	b := models.BindBoxWithAccount{
 		AccountHash: services.ExistsHash,
 		BoxUUID:     uuid.NewString(),
+		BoxAlias:    "some-alias",
 	}
 
 	response := New(mockRepository).BindBoxWithAccount(b)
@@ -97,6 +98,7 @@ func TestService_BindBoxWithAccountUnknownError(t *testing.T) {
 	b := models.BindBoxWithAccount{
 		AccountHash: services.BadHash,
 		BoxUUID:     uuid.NewString(),
+		BoxAlias:    "some-alias",
 	}
 
 	response := New(mockRepository).BindBoxWithAccount(b)
@@ -106,6 +108,52 @@ func TestService_BindBoxWithAccountUnknownError(t *testing.T) {
 	assert.False(t, response.IsClientError())
 	assert.True(t, response.HasData())
 	assert.False(t, mockRepository.Has(b))
+	assert.Equal(t, error_codes.UnknownRepositoryErrorCode, response.GetData().(errors.ServiceError).Code)
+	assert.Equal(t, error_codes.UnknownRepositoryErrorDescription, response.GetData().(errors.ServiceError).Description)
+}
+
+func TestService_UpdateBoxSuccess(t *testing.T) {
+	defer mockRepository.Reset()
+	b := models.BoxUpdate{
+		UUID:  services.ExistsUUID,
+		Alias: "some-alias",
+	}
+
+	response := New(mockRepository).UpdateBox(b)
+
+	assert.Equal(t, expectedOkStatus, response.GetStatus())
+	assert.False(t, response.IsServerError())
+	assert.False(t, response.IsClientError())
+	assert.False(t, response.HasData())
+	assert.Equal(t, b.Alias, mockRepository.GetAlias(b.UUID))
+}
+
+func TestService_UpdateBoxInvalidData(t *testing.T) {
+	defer mockRepository.Reset()
+	b := models.BoxUpdate{}
+
+	response := New(mockRepository).UpdateBox(b)
+
+	assert.Equal(t, expectedErrorStatus, response.GetStatus())
+	assert.False(t, response.IsServerError())
+	assert.True(t, response.IsClientError())
+	assert.True(t, response.HasData())
+	assert.Equal(t, error_codes.ValidationErrorCode, response.GetData().(errors.ServiceError).Code)
+}
+
+func TestService_UpdateBoxUnknownError(t *testing.T) {
+	defer mockRepository.Reset()
+	b := models.BoxUpdate{
+		UUID:  services.BadUUID,
+		Alias: "some-alias",
+	}
+
+	response := New(mockRepository).UpdateBox(b)
+
+	assert.Equal(t, expectedErrorStatus, response.GetStatus())
+	assert.True(t, response.IsServerError())
+	assert.False(t, response.IsClientError())
+	assert.True(t, response.HasData())
 	assert.Equal(t, error_codes.UnknownRepositoryErrorCode, response.GetData().(errors.ServiceError).Code)
 	assert.Equal(t, error_codes.UnknownRepositoryErrorDescription, response.GetData().(errors.ServiceError).Description)
 }

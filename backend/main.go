@@ -85,6 +85,7 @@ func initRoutes(
 	{
 		sessionTokenAuthorized.GET("/boxes/:account_hash", boxController.GetBoxes)
 		sessionTokenAuthorized.POST("/box", boxController.BindBoxWithAccount)
+		sessionTokenAuthorized.PATCH("/box", boxController.UpdateBox)
 	}
 
 	boxBasicAuthorized := r.Group("/")

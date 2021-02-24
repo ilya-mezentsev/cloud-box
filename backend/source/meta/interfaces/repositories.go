@@ -17,7 +17,8 @@ type (
 	}
 
 	BoxRepository interface {
-		GetBoxes(accountHash string) ([]models.Box, error)
-		BindBoxWithAccount(accountHash, boxUUID string) error
+		GetBoxes(accountHash string) ([]models.BoxView, error)
+		BindBoxWithAccount(bindBox models.BindBoxWithAccount) error
+		UpdateBox(box models.BoxUpdate) error
 	}
 )

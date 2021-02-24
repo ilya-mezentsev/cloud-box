@@ -36,3 +36,16 @@ func (c Controller) BindBoxWithAccount(context *gin.Context) {
 		c.service.BindBoxWithAccount(b),
 	)
 }
+
+func (c Controller) UpdateBox(context *gin.Context) {
+	var b models.BoxUpdate
+	if err := context.BindJSON(&b); err != nil {
+		presenter.MakeInvalidJsonResponse(context)
+		return
+	}
+
+	presenter.MakeJsonResponse(
+		context,
+		c.service.UpdateBox(b),
+	)
+}

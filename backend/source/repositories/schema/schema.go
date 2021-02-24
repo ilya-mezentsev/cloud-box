@@ -16,6 +16,7 @@ create table if not exists account_credentials(
 create table if not exists box(
 	id serial,
 	tunnel_domain character(60),
+	alias character(255) default '',
 	uuid character(36) unique,
 	account_hash character(32)
 );
