@@ -33,7 +33,7 @@ class ErrorResponse extends APIResponse {
 
     /**
      *
-     * @return {{code: string, description: string}}
+     * @return {{code?: string, description: string}}
      */
     data() {
         return super.data();
@@ -56,7 +56,7 @@ export function errorResponseOrDefault(apiResponse) {
 /**
  *
  * @param {{status: 'ok' | 'error', data: any}} apiResponse
- * @param {Function} successResponseConstructor
+ * @param {function(any): SuccessResponse} successResponseConstructor
  * @return {SuccessResponse | ErrorResponse}
  */
 export function errorResponseOr(apiResponse, successResponseConstructor) {
