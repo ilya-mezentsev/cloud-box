@@ -6,9 +6,13 @@ import (
 )
 
 const (
-	getAccountBoxesQuery = `select trim(tunnel_domain) tunnel_domain, trim(uuid) uuid from box where account_hash = $1`
+	getAccountBoxesQuery = `
+	select trim(tunnel_domain) tunnel_domain, trim(uuid) uuid, trim(alias) alias from box
+	where account_hash = $1`
 
-	setAccountHashToBoxQuery = `update box set account_hash = $1 where uuid = $2`
+	setAccountHashToBoxQuery = `update box set account_hash = :account_hash, alias = :alias where uuid = :uuid`
+
+	updateBoxQuery = `update box set alias = :alias where uuid = :uuid`
 
 	addBoxQuery = `
 	insert into box(tunnel_domain, uuid)
@@ -26,15 +30,21 @@ func New(db *sqlx.DB) Repository {
 	return Repository{db}
 }
 
-func (r Repository) GetBoxes(accountHash string) ([]models.Box, error) {
-	var boxes []models.Box
+func (r Repository) GetBoxes(accountHash string) ([]models.BoxView, error) {
+	var boxes []models.BoxView
 	err := r.db.Select(&boxes, getAccountBoxesQuery, accountHash)
 
 	return boxes, err
 }
 
-func (r Repository) BindBoxWithAccount(accountHash, boxUUID string) error {
-	_, err := r.db.Exec(setAccountHashToBoxQuery, accountHash, boxUUID)
+func (r Repository) BindBoxWithAccount(bindBox models.BindBoxWithAccount) error {
+	_, err := r.db.NamedExec(setAccountHashToBoxQuery, bindBox)
+
+	return err
+}
+
+func (r Repository) UpdateBox(box models.BoxUpdate) error {
+	_, err := r.db.NamedExec(updateBoxQuery, box)
 
 	return err
 }

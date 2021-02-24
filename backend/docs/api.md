@@ -86,8 +86,8 @@ Each API response can contains error in format:
 {
   "status": "ok",
   "data": [
-    {"tunnel_domain": "www.google.com", "uuid":  "1b86c2d7-a7a0-4b42-85fe-421ada083758"},
-    {"tunnel_domain": "some.tunnel.domain.com ", "uuid":  "c4f81f0d-60e0-44d0-976c-bac385fe6ae9"}
+    {"tunnel_domain": "www.google.com", "uuid":  "1b86c2d7-a7a0-4b42-85fe-421ada083758", "alias": "some-alias"},
+    {"tunnel_domain": "some.tunnel.domain.com ", "uuid":  "c4f81f0d-60e0-44d0-976c-bac385fe6ae9", "alias": "hello-world"}
   ]
 }
 ```
@@ -100,7 +100,7 @@ Each API response can contains error in format:
 ```json5
 {
   "account_hash": "52704c0857d96f3368c3aa775741a403",
-  "box_uuid": "c4f81f0d-60e0-44d0-976c-bac385fe6ae9",
+  "uuid": "c4f81f0d-60e0-44d0-976c-bac385fe6ae9", // box uuid
 }
 ```
 #### Ok response:
@@ -113,6 +113,24 @@ Each API response can contains error in format:
 * validation-error - at least one provided field value is invalid
 * repository-error - DB error (should not happen)
 
+### PATCH /box - update box (only alias for now)
+#### Auth - cookie
+#### Body:
+```json5
+{
+  "alias": "some-alias",
+  "uuid": "c4f81f0d-60e0-44d0-976c-bac385fe6ae9", // box uuid
+}
+```
+#### Ok response:
+```json5
+{
+  "status": "ok"
+}
+```
+#### Error codes:
+* validation-error - at least one provided field value is invalid
+* repository-error - DB error (should not happen)
 
 ### POST /registration/box - register box data (only for target device)
 #### Auth - basic

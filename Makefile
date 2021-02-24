@@ -16,6 +16,8 @@ build: box-build backend-build frontend-build containers-build
 
 run: containers-run
 
+tests: box-tests backend-tests
+
 box-build:
 	cargo build --manifest-path $(BOX_MANIFEST_FILE)
 
