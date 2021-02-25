@@ -24,6 +24,7 @@ check: box-check backend-check frontend-check
 
 box-build:
 	cargo build --manifest-path $(BOX_MANIFEST_FILE)
+	cd $(BOX_DIR)/scripts && npm i
 
 box-run:
 	DEVICES_MOUNT_ROOT=$(DEVICES_MOUNT_ROOT) cargo run --manifest-path $(BOX_MANIFEST_FILE)
