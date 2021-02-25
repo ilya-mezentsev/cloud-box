@@ -1,4 +1,4 @@
-import {POST, errorResponseOrDefault} from '../shared';
+import { POST, errorResponseOrDefault } from '../shared';
 
 /**
  *

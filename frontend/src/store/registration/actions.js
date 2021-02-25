@@ -19,5 +19,5 @@ export function signUp({mail, password}) {
         } catch (e) {
             console.error(e);
         }
-    }
+    };
 }

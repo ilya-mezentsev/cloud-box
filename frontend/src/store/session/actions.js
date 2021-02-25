@@ -20,7 +20,7 @@ export function signIn({ mail, password }) {
         } catch (e) {
             console.error(e);
         }
-    }
+    };
 }
 
 /**
@@ -60,7 +60,7 @@ export function fetchSession() {
         } catch (e) {
             console.error(e);
         }
-    }
+    };
 }
 
 /**
@@ -82,5 +82,5 @@ export function signOut() {
         } catch (e) {
             console.error(e);
         }
-    }
+    };
 }
