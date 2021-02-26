@@ -1,5 +1,5 @@
-import {bindActionCreators} from "redux";
-import {signUp} from "../../store/registration/actions";
+import { bindActionCreators } from 'redux';
+import { signUp } from '../../store/registration/actions';
 
 export function SignUp(props) {
     return (

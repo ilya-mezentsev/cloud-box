@@ -1,5 +1,5 @@
 import mime from 'mime-types';
-import {POST, PATCH, DELETE, errorResponseOrDefault} from "../shared";
+import { POST, PATCH, DELETE, errorResponseOrDefault } from "../shared";
 
 /**
  *

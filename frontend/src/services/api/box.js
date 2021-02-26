@@ -9,7 +9,7 @@ import {
 class AccountBoxesResponse extends SuccessResponse {
     /**
      *
-     * @return {Array<{tunnelDomain: string, uuid: string}>}
+     * @return {Array<{tunnelDomain: string, uuid: string, alias: string}>}
      */
     data() {
         return super.data();
@@ -39,14 +39,16 @@ export async function fetchBoxes(accountHash) {
  *
  * @param {string} accountHash
  * @param {string} boxUUID
+ * @param {string} alias
  * @return {Promise<SuccessResponse | ErrorResponse>}
  */
-export async function bindBox({accountHash, boxUUID}) {
+export async function bindBox({accountHash, boxUUID, alias}) {
     const response = await POST({
         path: 'box',
         body: {
             account_hash: accountHash,
-            box_uuid: boxUUID,
+            uuid: boxUUID,
+            alias,
         }
     });
 

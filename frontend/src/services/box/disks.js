@@ -1,4 +1,4 @@
-import {SuccessResponse, GET, errorResponseOr} from '../shared';
+import { SuccessResponse, GET, errorResponseOr } from '../shared';
 
 class DisksResponse extends SuccessResponse {
     /**
