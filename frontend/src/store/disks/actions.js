@@ -4,12 +4,16 @@ import { ACTIONS } from './actionTypes';
 /**
  *
  * @param {string} tunnelDomain
+ * @param {string} boxUUID
  * @return {function(*): Promise<void>}
  */
-export function fetchDisks(tunnelDomain) {
+export function fetchDisks({tunnelDomain, boxUUID}) {
     return async dispatch => {
         try {
-            const disksResponse = await getDisks(tunnelDomain);
+            const disksResponse = await getDisks({
+                tunnelDomain,
+                boxUUID,
+            });
 
             if (disksResponse.isOk()) {
                 dispatch({

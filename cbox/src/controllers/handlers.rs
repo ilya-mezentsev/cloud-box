@@ -4,6 +4,10 @@ use crate::models::commands::{
     CreateFile, CreateFolder, DeleteFile, DeleteFolder, GetFile, GetFolder, Rename,
 };
 
+pub fn server_options() -> rouille::Response {
+    presenter::make_empty_response()
+}
+
 pub fn get_disks() -> rouille::Response {
     presenter::make_response(CommandFactory::get_disks().exec())
 }

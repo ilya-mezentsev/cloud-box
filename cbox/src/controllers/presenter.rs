@@ -4,6 +4,15 @@ use std::fs::File;
 use crate::models::responses::{DefaultOkResponse, ErrorResponse, ErrorResponseData, FileResponse, OkResponse};
 use serde::Serialize;
 
+pub fn make_empty_response() -> rouille::Response {
+    rouille::Response {
+        status_code: 200,
+        headers: vec![],
+        data: rouille::ResponseBody::empty(),
+        upgrade: None,
+    }
+}
+
 pub fn make_response<T: Serialize>(res: Result<T, Box<dyn Error>>) -> rouille::Response {
     match res {
         Ok(data) => rouille::Response::json(&OkResponse {
@@ -69,4 +78,13 @@ pub fn make_missing_param_response(param_name: &str) -> rouille::Response {
             description: format!("Param {} is missing", param_name),
         }
     })
+}
+
+pub fn make_unauthorized_response() -> rouille::Response {
+    rouille::Response {
+        status_code: 401,
+        headers: vec![],
+        data: rouille::ResponseBody::from_string("Unauthorized"),
+        upgrade: None,
+    }
 }
