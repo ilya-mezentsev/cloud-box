@@ -18,7 +18,7 @@ build: box-build backend-build frontend-build containers-build
 
 run: containers-run
 
-tests: box-tests backend-tests
+tests: box-tests backend-tests frontend-tests
 
 box-build:
 	cargo build --manifest-path $(BOX_MANIFEST_FILE)
@@ -67,6 +67,9 @@ db-show-boxes:
 
 frontend-build:
 	cd $(FRONTEND_DIR) && npm i && npm run build
+
+frontend-tests:
+	cd $(FRONTEND_DIR) && npm run test -- --watchAll=false
 
 frontend-check:
 	cd $(FRONTEND_DIR) && npm run lint

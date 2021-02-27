@@ -26,7 +26,7 @@ export class SuccessResponse extends APIResponse {
     }
 }
 
-class ErrorResponse extends APIResponse {
+export class ErrorResponse extends APIResponse {
     isOk() {
         return false;
     }

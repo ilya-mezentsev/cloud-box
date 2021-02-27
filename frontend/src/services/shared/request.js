@@ -1,3 +1,5 @@
+import { removeLeadingAndTrailingSlashes, buildQueryParams } from './helpers';
+
 const METHOD = {
     GET: 'GET',
     POST: 'POST',
@@ -143,32 +145,4 @@ async function request({
     );
 
     return await res.json();
-}
-
-/**
- *
- * @param {string} path
- * @return {string}
- */
-export function removeLeadingAndTrailingSlashes(path) {
-    while (path.startsWith('/')) {
-        path = path.substr(1)
-    }
-    while (path.endsWith('/')) {
-        path = path.substr(0, path.length - 1);
-    }
-
-    return path;
-}
-
-/**
- *
- * @param {Object} params
- * @return {string}
- */
-export function buildQueryParams(params) {
-    return params
-        .entries()
-        .map(([key, value]) => `${key}=${value}`)
-        .join('&');
 }

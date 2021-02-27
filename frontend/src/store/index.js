@@ -3,12 +3,14 @@ import thunk from 'redux-thunk';
 
 import { sessionReducer } from './session/reducer';
 import { boxesReducer } from './boxes/reducer';
-import { disksReducer } from "./disks/reducer";
+import { disksReducer } from './disks/reducer';
+import { fsReducer } from './fs/reducer';
 
 const reducer = combineReducers({
     hash: sessionReducer,
     boxes: boxesReducer,
     disks: disksReducer,
+    fs: fsReducer,
 });
 
 export const store = createStore(reducer, applyMiddleware(thunk));
