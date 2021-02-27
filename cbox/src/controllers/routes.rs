@@ -1,10 +1,15 @@
 use crate::controllers::handlers::{
-    create_file, create_folder, delete_file, delete_folder, get_disks, get_file, get_folder, rename,
+    server_options, create_file, create_folder, delete_file, delete_folder, get_disks, get_file, get_folder, rename,
 };
+use crate::controllers::middleware;
 
 pub fn start_server(addr: &str) {
     rouille::start_server(addr, move |request| {
-        router!(
+        if let Some(forbidding_response) = middleware::can_process(&request) {
+            return forbidding_response
+        }
+
+        middleware::with_cors_headers(router!(
             request,
 
             (GET) (/disks) => {
@@ -43,7 +48,7 @@ pub fn start_server(addr: &str) {
                 delete_folder(request)
             },
 
-            _ => rouille::Response::empty_404(),
-        )
+            _ => server_options(),
+        ))
     });
 }

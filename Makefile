@@ -3,7 +3,9 @@ BOX_DIR := $(ROOT_DIR)/cbox
 BACKEND_DIR := $(ROOT_DIR)/backend
 FRONTEND_DIR := $(ROOT_DIR)/frontend
 DOCKER_COMPOSE_FILE := $(ROOT_DIR)/docker-compose.yaml
-PROJECT_NAME = "cloud_box"
+PROJECT_NAME := "cloud_box"
+BOX_CONTAINER_NAME := $(PROJECT_NAME)_cbox_1
+DB_CONTAINER_NAME := $(PROJECT_NAME)_db_1
 
 BOX_MANIFEST_FILE := $(BOX_DIR)/Cargo.toml
 DEVICES_MOUNT_ROOT := $(ROOT_DIR)/tmp-data
@@ -23,6 +25,9 @@ box-build:
 
 box-run:
 	DEVICES_MOUNT_ROOT=$(DEVICES_MOUNT_ROOT) cargo run --manifest-path $(BOX_MANIFEST_FILE)
+
+box-logs:
+	docker logs $(BOX_CONTAINER_NAME)
 
 box-tests:
 	cargo test --manifest-path $(BOX_MANIFEST_FILE) -- --nocapture
@@ -57,8 +62,14 @@ backend-calc-lines:
 db-run:
 	docker-compose -f $(ROOT_DIR)/docker-compose.yaml up db
 
+db-show-boxes:
+	docker exec $(DB_CONTAINER_NAME) psql --username cloud-box -d cloud_box -c "select * from box"
+
 frontend-build:
 	cd $(FRONTEND_DIR) && npm i && npm run build
+
+frontend-check:
+	cd $(FRONTEND_DIR) && npm run lint
 
 containers-run:
 	docker-compose -f $(DOCKER_COMPOSE_FILE) -p $(PROJECT_NAME) up

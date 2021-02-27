@@ -7,6 +7,7 @@ import {
     errorResponseOrDefault,
     SuccessResponse,
 } from '../shared';
+import { makeBoxRequestHeaders } from './shared';
 
 class FolderResponse extends SuccessResponse {
     /**
@@ -23,12 +24,14 @@ class FolderResponse extends SuccessResponse {
  * @param {string} tunnelDomain
  * @param {string} folderPath
  * @param {string} diskName
+ * @param {string} boxUUID
  * @return {Promise<FolderResponse | ErrorResponse>}
  */
 export async function getFolder({
     tunnelDomain,
     folderPath,
     diskName,
+    boxUUID,
 }) {
     const response = await GET({
         absolutePath: tunnelDomain,
@@ -37,6 +40,9 @@ export async function getFolder({
             folder_path: folderPath,
             disk_name: diskName,
         },
+        headers: makeBoxRequestHeaders({
+            boxUUID,
+        }),
     });
 
     // noinspection JSUnresolvedVariable
@@ -58,6 +64,7 @@ export async function getFolder({
  * @param {string} diskName
  * @param {string} rootPath
  * @param {string} folderName
+ * @param {string} boxUUID
  * @return {Promise<SuccessResponse | ErrorResponse>}
  */
 export async function createFolder({
@@ -65,6 +72,7 @@ export async function createFolder({
     diskName,
     rootPath,
     folderName,
+    boxUUID,
 }) {
     const response = await POST({
         absolutePath: tunnelDomain,
@@ -73,7 +81,10 @@ export async function createFolder({
             disk_name: diskName,
             root_path: rootPath,
             folder_name: folderName,
-        }
+        },
+        headers: makeBoxRequestHeaders({
+            boxUUID,
+        }),
     });
 
     return errorResponseOrDefault(response);
@@ -86,6 +97,7 @@ export async function createFolder({
  * @param {string} rootPath
  * @param {string} oldName
  * @param {string} newName
+ * @param {string} boxUUID
  * @return {Promise<SuccessResponse | ErrorResponse>}
  */
 export async function renameFolder({
@@ -94,6 +106,7 @@ export async function renameFolder({
     rootPath,
     oldName,
     newName,
+    boxUUID,
 }) {
     const response = await PATCH({
         absolutePath: tunnelDomain,
@@ -103,7 +116,10 @@ export async function renameFolder({
             folder_path: rootPath,
             old_name: oldName,
             new_name: newName,
-        }
+        },
+        headers: makeBoxRequestHeaders({
+            boxUUID,
+        }),
     });
 
     return errorResponseOrDefault(response);
@@ -114,12 +130,14 @@ export async function renameFolder({
  * @param {string} tunnelDomain
  * @param {string} diskName
  * @param {string} folderPath
+ * @param {string} boxUUID
  * @return {Promise<SuccessResponse | ErrorResponse>}
  */
 export async function deleteFolder({
     tunnelDomain,
     diskName,
     folderPath,
+    boxUUID,
 }) {
     const response = await DELETE({
         absolutePath: tunnelDomain,
@@ -128,6 +146,9 @@ export async function deleteFolder({
             disk_name: diskName,
             folder_path: folderPath,
         },
+        headers: makeBoxRequestHeaders({
+            boxUUID,
+        }),
     });
 
     return errorResponseOrDefault(response);

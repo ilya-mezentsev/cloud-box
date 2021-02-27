@@ -1,14 +1,17 @@
 import mime from 'mime-types';
-import { POST, PATCH, DELETE, errorResponseOrDefault } from "../shared";
+import { POST, PATCH, DELETE, errorResponseOrDefault } from '../shared';
+import { makeBoxRequestHeaders } from './shared';
 
 /**
  *
  * @param {string} tunnelDomain
  * @param {string} diskName
  * @param {string} filePath
+ * @param {string} boxUUID
  * @return {string}
  */
-export function getFile({tunnelDomain, diskName, filePath}) {
+export function getFile({tunnelDomain, diskName, filePath, boxUUID}) {
+    // todo how to pass boxUUID here?
     return `${tunnelDomain}/file?file_path=${filePath}&disk_name=${diskName}`;
 }
 
@@ -18,6 +21,7 @@ export function getFile({tunnelDomain, diskName, filePath}) {
  * @param {string} diskName
  * @param {string} folderPath
  * @param {File} file
+ * @param {string} boxUUID
  * @return {Promise<SuccessResponse | ErrorResponse>}
  */
 export async function createFile({
@@ -25,6 +29,7 @@ export async function createFile({
     diskName,
     folderPath,
     file,
+    boxUUID,
 }) {
     const fd = new FormData();
     fd.append('disk_name', diskName);
@@ -36,6 +41,9 @@ export async function createFile({
         path: 'file',
         body: fd,
         contentType: mime.lookup(file.name) || 'application/octet-stream',
+        headers: makeBoxRequestHeaders({
+            boxUUID,
+        }),
     });
 
     return errorResponseOrDefault(response);
@@ -48,6 +56,7 @@ export async function createFile({
  * @param {string} folderPath
  * @param {string} oldName
  * @param {string} newName
+ * @param {string} boxUUID
  * @return {Promise<SuccessResponse | ErrorResponse>}
  */
 export async function renameFile({
@@ -56,6 +65,7 @@ export async function renameFile({
     folderPath,
     oldName,
     newName,
+    boxUUID,
 }) {
     const response = await PATCH({
         absolutePath: tunnelDomain,
@@ -65,7 +75,10 @@ export async function renameFile({
             folder_path: folderPath,
             old_name: oldName,
             new_name: newName,
-        }
+        },
+        headers: makeBoxRequestHeaders({
+            boxUUID,
+        }),
     });
 
     return errorResponseOrDefault(response);
@@ -76,12 +89,14 @@ export async function renameFile({
  * @param {string} tunnelDomain
  * @param {string} diskName
  * @param {string} filePath
+ * @param {string} boxUUID
  * @return {Promise<SuccessResponse | ErrorResponse>}
  */
 export async function deleteFile({
     tunnelDomain,
     diskName,
     filePath,
+    boxUUID,
 }) {
     const response = await DELETE({
         absolutePath: tunnelDomain,
@@ -90,6 +105,9 @@ export async function deleteFile({
             disk_name: diskName,
             file_path: filePath,
         },
+        headers: makeBoxRequestHeaders({
+            boxUUID,
+        }),
     });
 
     return errorResponseOrDefault(response);
