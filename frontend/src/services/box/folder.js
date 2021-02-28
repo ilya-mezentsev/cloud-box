@@ -12,7 +12,7 @@ import { makeBoxRequestHeaders } from './shared';
 class FolderResponse extends SuccessResponse {
     /**
      *
-     * @return {{path: string, nodes: Array<{nodeType: string, name: string}>}}
+     * @return {{path: string, nodes: Array<{nodeType: 'folder' | 'file' | 'unknown', name: string}>}}
      */
     data() {
         return super.data();

@@ -31,6 +31,7 @@ export async function fetchBoxes(accountHash) {
             data => new AccountBoxesResponse(data.map(box => ({
                 tunnelDomain: box.tunnel_domain,
                 uuid: box.uuid,
+                alias: box.alias,
             }))),
         )
 }
