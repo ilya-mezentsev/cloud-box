@@ -28,12 +28,12 @@ export async function fetchBoxes(accountHash) {
 
     return errorResponseOr(
         response,
-            data => new AccountBoxesResponse(data.map(box => ({
-                tunnelDomain: box.tunnel_domain,
-                uuid: box.uuid,
-                alias: box.alias,
-            }))),
-        )
+        data => new AccountBoxesResponse(data.map(box => ({
+            tunnelDomain: box.tunnel_domain,
+            uuid: box.uuid,
+            alias: box.alias,
+        }))),
+    );
 }
 
 /**
@@ -50,7 +50,7 @@ export async function bindBox({accountHash, boxUUID, alias}) {
             account_hash: accountHash,
             uuid: boxUUID,
             alias,
-        }
+        },
     });
 
     return errorResponseOrDefault(response);
