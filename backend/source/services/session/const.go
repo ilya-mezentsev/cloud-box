@@ -1,13 +1,14 @@
 package session
 
 const (
-	cookieTokenKey    = "Cloud-Box-Token"
-	cookiePath        = "/"
-	cookieMaxAge      = 86400 // 1 day
-	cookieHttpOnly    = true
-	cookieUnsetValue  = ""
-	cookieUnsetMaxAge = 0
-	forbiddenMessage  = "Forbidden"
+	cookieTokenKey       = "Cloud-Box-Token"
+	cookiePath           = "/"
+	cookieMaxAge         = 86400 // 1 day
+	cookieHttpOnly       = true
+	cookieUnsetValue     = ""
+	cookieUnsetMaxAge    = 0
+	forbiddenMessage     = "Forbidden"
+	internalErrorMessage = "Internal Error"
 )
 
 const (

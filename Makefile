@@ -20,6 +20,8 @@ run: containers-run
 
 tests: box-tests backend-tests frontend-tests
 
+check: box-check backend-check frontend-check
+
 box-build:
 	cargo build --manifest-path $(BOX_MANIFEST_FILE)
 
