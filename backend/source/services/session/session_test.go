@@ -241,7 +241,6 @@ func TestService_HasSessionFalse(t *testing.T) {
 	h(c)
 
 	assert.Equal(t, http.StatusForbidden, w.Code)
-	assert.Equal(t, forbiddenMessage, w.Body.String())
 }
 
 func TestService_HasSessionNotExists(t *testing.T) {
@@ -254,7 +253,6 @@ func TestService_HasSessionNotExists(t *testing.T) {
 	h(c)
 
 	assert.Equal(t, http.StatusForbidden, w.Code)
-	assert.Equal(t, forbiddenMessage, w.Body.String())
 }
 
 func TestService_HasSessionInternalError(t *testing.T) {
@@ -267,5 +265,4 @@ func TestService_HasSessionInternalError(t *testing.T) {
 	h(c)
 
 	assert.Equal(t, http.StatusInternalServerError, w.Code)
-	assert.Equal(t, internalErrorMessage, w.Body.String())
 }
