@@ -33,9 +33,16 @@ func New(
 
 func (s Service) HasSession() gin.HandlerFunc {
 	return func(c *gin.Context) {
-		_, err := c.Cookie(cookieTokenKey)
-
+		cookie, err := c.Cookie(cookieTokenKey)
 		if err != nil {
+			c.String(http.StatusForbidden, forbiddenMessage)
+			return
+		}
+
+		hashExists, err := s.repository.HashExists(cookie)
+		if err != nil {
+			c.String(http.StatusInternalServerError, internalErrorMessage)
+		} else if !hashExists {
 			c.String(http.StatusForbidden, forbiddenMessage)
 		} else {
 			c.Next()

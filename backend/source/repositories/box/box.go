@@ -10,7 +10,10 @@ const (
 	select trim(tunnel_domain) tunnel_domain, trim(uuid) uuid, trim(alias) alias from box
 	where account_hash = $1`
 
-	setAccountHashToBoxQuery = `update box set account_hash = :account_hash, alias = :alias where uuid = :uuid`
+	setAccountHashToBoxQuery = `
+	update box
+	set account_hash = :account_hash, alias = :alias
+	where uuid = :uuid and account_hash is null`
 
 	updateBoxQuery = `update box set alias = :alias where uuid = :uuid`
 

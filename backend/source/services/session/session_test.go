@@ -243,3 +243,29 @@ func TestService_HasSessionFalse(t *testing.T) {
 	assert.Equal(t, http.StatusForbidden, w.Code)
 	assert.Equal(t, forbiddenMessage, w.Body.String())
 }
+
+func TestService_HasSessionNotExists(t *testing.T) {
+	w := httptest.NewRecorder()
+	c, _ := gin.CreateTestContext(w)
+	c.Request = controllers.CreateRequestWithCookie(cookieTokenKey, "not-exists")
+
+	h := service.HasSession()
+
+	h(c)
+
+	assert.Equal(t, http.StatusForbidden, w.Code)
+	assert.Equal(t, forbiddenMessage, w.Body.String())
+}
+
+func TestService_HasSessionInternalError(t *testing.T) {
+	w := httptest.NewRecorder()
+	c, _ := gin.CreateTestContext(w)
+	c.Request = controllers.CreateRequestWithCookie(cookieTokenKey, services.BadHash)
+
+	h := service.HasSession()
+
+	h(c)
+
+	assert.Equal(t, http.StatusInternalServerError, w.Code)
+	assert.Equal(t, internalErrorMessage, w.Body.String())
+}

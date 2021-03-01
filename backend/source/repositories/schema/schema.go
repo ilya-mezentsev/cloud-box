@@ -18,7 +18,7 @@ create table if not exists box(
 	tunnel_domain character(60),
 	alias character(255) default '',
 	uuid character(36) unique,
-	account_hash character(32)
+	account_hash character(32) default null
 );
 
 

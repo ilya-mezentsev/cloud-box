@@ -5,6 +5,7 @@ import (
 	"cloud-box-backend/source/meta/mock/repositories"
 	"cloud-box-backend/source/meta/models"
 	"cloud-box-backend/source/repositories/connection"
+	"fmt"
 	"github.com/jmoiron/sqlx"
 	_ "github.com/lib/pq"
 	"github.com/stretchr/testify/assert"
@@ -119,6 +120,37 @@ func TestRepository_BindBoxWithAccountNotExistsHash(t *testing.T) {
 
 	assert.NotNil(t, err)
 	assert.Empty(t, boxAccountHash)
+}
+
+func TestRepository_BindBoxWithAccountBoxAlreadyHasAccountHash(t *testing.T) {
+	defer repositories.MustReinstall(db)
+	h := "some-hash"
+	b := models.BoxView{
+		TunnelDomain: "www.google.com",
+		UUID:         "some-uuid",
+	}
+	db.MustExec(`insert into account(hash) values($1)`, h)
+	_, err := db.NamedExec(
+		`insert into box(tunnel_domain, uuid, account_hash) values(:tunnel_domain, :uuid, :account_hash)`,
+		map[string]interface{}{
+			"tunnel_domain": b.TunnelDomain,
+			"uuid":          b.UUID,
+			"account_hash":  h,
+		},
+	)
+	assert.Nil(t, err)
+
+	err = repository.BindBoxWithAccount(models.BindBoxWithAccount{
+		AccountHash: fmt.Sprintf("%s_%s", h, h),
+		BoxUUID:     b.UUID,
+		BoxAlias:    "some-alias",
+	})
+
+	var boxAccountHash string
+	_ = db.Get(&boxAccountHash, `select trim(account_hash) from box where uuid = $1`, b.UUID)
+
+	assert.Nil(t, err)
+	assert.Equal(t, h, boxAccountHash)
 }
 
 func TestRepository_RegisterSuccess(t *testing.T) {
