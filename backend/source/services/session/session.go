@@ -35,15 +35,22 @@ func (s Service) HasSession() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		cookie, err := c.Cookie(cookieTokenKey)
 		if err != nil {
-			c.String(http.StatusForbidden, forbiddenMessage)
+			c.AbortWithStatus(http.StatusForbidden)
 			return
 		}
 
 		hashExists, err := s.repository.HashExists(cookie)
 		if err != nil {
-			c.String(http.StatusInternalServerError, internalErrorMessage)
+			logger.WithFields(logger.Fields{
+				MessageTemplate: "Unable to check token existence: %v",
+				Args: []interface{}{
+					err,
+				},
+			}, logger.Error)
+
+			c.AbortWithStatus(http.StatusInternalServerError)
 		} else if !hashExists {
-			c.String(http.StatusForbidden, forbiddenMessage)
+			c.AbortWithStatus(http.StatusForbidden)
 		} else {
 			c.Next()
 		}
