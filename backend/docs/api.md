@@ -100,6 +100,7 @@ Each API response can contains error in format:
 ```json5
 {
   "account_hash": "52704c0857d96f3368c3aa775741a403",
+  "alias": "some-alias",
   "uuid": "c4f81f0d-60e0-44d0-976c-bac385fe6ae9", // box uuid
 }
 ```

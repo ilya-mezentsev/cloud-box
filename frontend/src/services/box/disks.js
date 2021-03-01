@@ -1,4 +1,5 @@
-import {SuccessResponse, GET, errorResponseOr} from '../shared';
+import { SuccessResponse, GET, errorResponseOr } from '../shared';
+import { makeBoxRequestHeaders } from './shared';
 
 class DisksResponse extends SuccessResponse {
     /**
@@ -13,12 +14,16 @@ class DisksResponse extends SuccessResponse {
 /**
  *
  * @param {string} tunnelDomain
+ * @param {string} boxUUID
  * @return {Promise<DisksResponse | ErrorResponse>}
  */
-export async function getDisks(tunnelDomain) {
+export async function getDisks({tunnelDomain, boxUUID}) {
     const response = await GET({
         absolutePath: tunnelDomain,
         path: 'disks',
+        headers: makeBoxRequestHeaders({
+            boxUUID,
+        }),
     });
 
     return errorResponseOr(response, data => new DisksResponse(data));

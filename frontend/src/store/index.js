@@ -1,6 +1,16 @@
-import { createStore, applyMiddleware } from 'redux';
+import { createStore, applyMiddleware, combineReducers } from 'redux';
 import thunk from 'redux-thunk';
 
 import { sessionReducer } from './session/reducer';
+import { boxesReducer } from './boxes/reducer';
+import { disksReducer } from './disks/reducer';
+import { fsReducer } from './fs/reducer';
 
-export const store = createStore(sessionReducer, applyMiddleware(thunk));
+const reducer = combineReducers({
+    hash: sessionReducer,
+    boxes: boxesReducer,
+    disks: disksReducer,
+    fs: fsReducer,
+});
+
+export const store = createStore(reducer, applyMiddleware(thunk));

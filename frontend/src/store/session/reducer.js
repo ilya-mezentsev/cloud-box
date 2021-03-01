@@ -5,7 +5,7 @@ import { initialState } from '../state/initial';
  *
  * @param {{hash: string|null}} state
  * @param {{type: string, sessionHash?: string}} action
- * @return {{hash: string|null}}
+ * @return {Object}
  */
 export function sessionReducer(state = initialState, action) {
     switch (action.type) {

@@ -1,5 +1,5 @@
-import {bindActionCreators} from 'redux';
-import {signIn} from '../../store/session/actions';
+import { bindActionCreators } from 'redux';
+import { signIn } from '../../store/session/actions';
 
 export function SignIn(props) {
     return (
