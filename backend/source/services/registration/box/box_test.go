@@ -10,14 +10,15 @@ import (
 	"github.com/stretchr/testify/assert"
 	"io/ioutil"
 	"log"
+	"net/http"
 	"os"
 	"testing"
 )
 
 var (
 	mockRepository      = &services.BoxRegistrationRepositoryMock{}
-	expectedOkStatus    = response_factory.DefaultResponse().GetStatus()
-	expectedErrorStatus = response_factory.ServerError(nil).GetStatus()
+	expectedOkStatus    = response_factory.DefaultResponse().ApplicationStatus()
+	expectedErrorStatus = response_factory.ServerError(nil).ApplicationStatus()
 )
 
 func init() {
@@ -39,9 +40,8 @@ func TestService_RegisterSuccess(t *testing.T) {
 	response := New(mockRepository).Register(box)
 
 	assert.True(t, mockRepository.Has(box))
-	assert.Equal(t, expectedOkStatus, response.GetStatus())
-	assert.False(t, response.IsServerError())
-	assert.False(t, response.IsClientError())
+	assert.Equal(t, expectedOkStatus, response.ApplicationStatus())
+	assert.Equal(t, http.StatusNoContent, response.HttpStatus())
 	assert.False(t, response.HasData())
 	assert.Nil(t, response.GetData())
 }
@@ -56,9 +56,8 @@ func TestService_RegisterValidationError(t *testing.T) {
 	response := New(mockRepository).Register(box)
 
 	assert.False(t, mockRepository.Has(box))
-	assert.Equal(t, expectedErrorStatus, response.GetStatus())
-	assert.False(t, response.IsServerError())
-	assert.True(t, response.IsClientError())
+	assert.Equal(t, expectedErrorStatus, response.ApplicationStatus())
+	assert.Equal(t, http.StatusBadRequest, response.HttpStatus())
 	assert.True(t, response.HasData())
 	assert.Equal(t, error_codes.ValidationErrorCode, response.GetData().(errors.ServiceError).Code)
 }
@@ -73,9 +72,8 @@ func TestService_RegisterUnknownError(t *testing.T) {
 	response := New(mockRepository).Register(box)
 
 	assert.False(t, mockRepository.Has(box))
-	assert.Equal(t, expectedErrorStatus, response.GetStatus())
-	assert.True(t, response.IsServerError())
-	assert.False(t, response.IsClientError())
+	assert.Equal(t, expectedErrorStatus, response.ApplicationStatus())
+	assert.Equal(t, http.StatusInternalServerError, response.HttpStatus())
 	assert.True(t, response.HasData())
 	assert.Equal(t, error_codes.UnknownRepositoryErrorCode, response.GetData().(errors.ServiceError).Code)
 	assert.Equal(t, error_codes.UnknownRepositoryErrorDescription, response.GetData().(errors.ServiceError).Description)

@@ -10,14 +10,15 @@ import (
 	"github.com/stretchr/testify/assert"
 	"io/ioutil"
 	"log"
+	"net/http"
 	"os"
 	"testing"
 )
 
 var (
 	mockRepository      = &services.BoxRepositoryMock{}
-	expectedOkStatus    = response_factory.DefaultResponse().GetStatus()
-	expectedErrorStatus = response_factory.ServerError(nil).GetStatus()
+	expectedOkStatus    = response_factory.DefaultResponse().ApplicationStatus()
+	expectedErrorStatus = response_factory.ServerError(nil).ApplicationStatus()
 )
 
 func init() {
@@ -37,9 +38,8 @@ func TestService_BoxesSuccess(t *testing.T) {
 	gotBoxes := response.GetData()
 	expectedBoxes, _ := mockRepository.GetBoxes(services.ExistsHash)
 
-	assert.Equal(t, expectedOkStatus, response.GetStatus())
-	assert.False(t, response.IsServerError())
-	assert.False(t, response.IsClientError())
+	assert.Equal(t, expectedOkStatus, response.ApplicationStatus())
+	assert.Equal(t, http.StatusOK, response.HttpStatus())
 	assert.True(t, response.HasData())
 	for _, b := range expectedBoxes {
 		assert.Contains(t, gotBoxes, b)
@@ -51,9 +51,8 @@ func TestService_BoxesUnknownError(t *testing.T) {
 
 	response := New(mockRepository).Boxes(services.BadHash)
 
-	assert.Equal(t, expectedErrorStatus, response.GetStatus())
-	assert.True(t, response.IsServerError())
-	assert.False(t, response.IsClientError())
+	assert.Equal(t, expectedErrorStatus, response.ApplicationStatus())
+	assert.Equal(t, http.StatusInternalServerError, response.HttpStatus())
 	assert.True(t, response.HasData())
 	assert.Equal(t, error_codes.UnknownRepositoryErrorCode, response.GetData().(errors.ServiceError).Code)
 	assert.Equal(t, error_codes.UnknownRepositoryErrorDescription, response.GetData().(errors.ServiceError).Description)
@@ -69,9 +68,8 @@ func TestService_BindBoxWithAccountSuccess(t *testing.T) {
 
 	response := New(mockRepository).BindBoxWithAccount(b)
 
-	assert.Equal(t, expectedOkStatus, response.GetStatus())
-	assert.False(t, response.IsServerError())
-	assert.False(t, response.IsClientError())
+	assert.Equal(t, expectedOkStatus, response.ApplicationStatus())
+	assert.Equal(t, http.StatusNoContent, response.HttpStatus())
 	assert.False(t, response.HasData())
 	assert.True(t, mockRepository.Has(b))
 }
@@ -85,9 +83,8 @@ func TestService_BindBoxWithAccountInvalidData(t *testing.T) {
 
 	response := New(mockRepository).BindBoxWithAccount(b)
 
-	assert.Equal(t, expectedErrorStatus, response.GetStatus())
-	assert.False(t, response.IsServerError())
-	assert.True(t, response.IsClientError())
+	assert.Equal(t, expectedErrorStatus, response.ApplicationStatus())
+	assert.Equal(t, http.StatusBadRequest, response.HttpStatus())
 	assert.True(t, response.HasData())
 	assert.False(t, mockRepository.Has(b))
 	assert.Equal(t, error_codes.ValidationErrorCode, response.GetData().(errors.ServiceError).Code)
@@ -103,9 +100,8 @@ func TestService_BindBoxWithAccountUnknownError(t *testing.T) {
 
 	response := New(mockRepository).BindBoxWithAccount(b)
 
-	assert.Equal(t, expectedErrorStatus, response.GetStatus())
-	assert.True(t, response.IsServerError())
-	assert.False(t, response.IsClientError())
+	assert.Equal(t, expectedErrorStatus, response.ApplicationStatus())
+	assert.Equal(t, http.StatusInternalServerError, response.HttpStatus())
 	assert.True(t, response.HasData())
 	assert.False(t, mockRepository.Has(b))
 	assert.Equal(t, error_codes.UnknownRepositoryErrorCode, response.GetData().(errors.ServiceError).Code)
@@ -121,9 +117,8 @@ func TestService_UpdateBoxSuccess(t *testing.T) {
 
 	response := New(mockRepository).UpdateBox(b)
 
-	assert.Equal(t, expectedOkStatus, response.GetStatus())
-	assert.False(t, response.IsServerError())
-	assert.False(t, response.IsClientError())
+	assert.Equal(t, expectedOkStatus, response.ApplicationStatus())
+	assert.Equal(t, http.StatusNoContent, response.HttpStatus())
 	assert.False(t, response.HasData())
 	assert.Equal(t, b.Alias, mockRepository.GetAlias(b.UUID))
 }
@@ -134,9 +129,8 @@ func TestService_UpdateBoxInvalidData(t *testing.T) {
 
 	response := New(mockRepository).UpdateBox(b)
 
-	assert.Equal(t, expectedErrorStatus, response.GetStatus())
-	assert.False(t, response.IsServerError())
-	assert.True(t, response.IsClientError())
+	assert.Equal(t, expectedErrorStatus, response.ApplicationStatus())
+	assert.Equal(t, http.StatusBadRequest, response.HttpStatus())
 	assert.True(t, response.HasData())
 	assert.Equal(t, error_codes.ValidationErrorCode, response.GetData().(errors.ServiceError).Code)
 }
@@ -150,9 +144,8 @@ func TestService_UpdateBoxUnknownError(t *testing.T) {
 
 	response := New(mockRepository).UpdateBox(b)
 
-	assert.Equal(t, expectedErrorStatus, response.GetStatus())
-	assert.True(t, response.IsServerError())
-	assert.False(t, response.IsClientError())
+	assert.Equal(t, expectedErrorStatus, response.ApplicationStatus())
+	assert.Equal(t, http.StatusInternalServerError, response.HttpStatus())
 	assert.True(t, response.HasData())
 	assert.Equal(t, error_codes.UnknownRepositoryErrorCode, response.GetData().(errors.ServiceError).Code)
 	assert.Equal(t, error_codes.UnknownRepositoryErrorDescription, response.GetData().(errors.ServiceError).Description)

@@ -1,9 +1,8 @@
 package interfaces
 
 type Response interface {
-	GetStatus() string
+	HttpStatus() int
+	ApplicationStatus() string
 	HasData() bool
-	IsServerError() bool
-	IsClientError() bool
 	GetData() interface{}
 }

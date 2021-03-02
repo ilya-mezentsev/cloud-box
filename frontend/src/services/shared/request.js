@@ -143,6 +143,15 @@ async function request({
         path,
         options,
     );
+    const resHasText = (await res.text()) !== '';
+    if (resHasText) {
+        return await res.json();
+    } else if (
+        !res.ok &&
+        !resHasText
+    ) {
+        throw Error(`Response status (${res.status}) is unsuccessful and no body is present`);
+    }
 
-    return await res.json();
+    return null;
 }

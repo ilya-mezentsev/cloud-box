@@ -1,13 +1,15 @@
 package response_factory
 
+import "net/http"
+
 type clientErrorResponse struct {
 	defaultResponse
 }
 
-func (r clientErrorResponse) GetStatus() string {
+func (r clientErrorResponse) ApplicationStatus() string {
 	return statusError
 }
 
-func (r clientErrorResponse) IsClientError() bool {
-	return true
+func (r clientErrorResponse) HttpStatus() int {
+	return http.StatusBadRequest
 }

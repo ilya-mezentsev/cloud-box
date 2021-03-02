@@ -81,7 +81,7 @@ func initRoutes(
 	r.DELETE("/session", sessionController.DeleteSession)
 
 	sessionTokenAuthorized := r.Group("/")
-	sessionTokenAuthorized.Use(sessionService.HasSession())
+	sessionTokenAuthorized.Use(sessionController.HasSession())
 	{
 		sessionTokenAuthorized.GET("/boxes/:account_hash", boxController.GetBoxes)
 		sessionTokenAuthorized.POST("/box", boxController.BindBoxWithAccount)

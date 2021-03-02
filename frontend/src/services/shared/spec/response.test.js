@@ -6,7 +6,7 @@ describe('build response tests', () => {
 
         expect(response).toBeInstanceOf(SuccessResponse);
         expect(response.isOk()).toBeTruthy();
-        expect(response.data()).toEqual('foo-bar');
+        expect(response.data()).toBeNull();
     });
 
     it('error response or default (returns error response)', () => {

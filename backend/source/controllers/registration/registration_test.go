@@ -30,8 +30,8 @@ var (
 
 	controller = New(userRegistrationService, boxRegistrationService)
 
-	expectedOkStatus    = response_factory.DefaultResponse().GetStatus()
-	expectedErrorStatus = response_factory.ServerError(nil).GetStatus()
+	expectedOkStatus    = response_factory.DefaultResponse().ApplicationStatus()
+	expectedErrorStatus = response_factory.ServerError(nil).ApplicationStatus()
 )
 
 func init() {
@@ -55,13 +55,9 @@ func TestController_RegisterUserSuccess(t *testing.T) {
 
 	controller.RegisterUser(c)
 
-	var res gin.H
-	err := json.Unmarshal(w.Body.Bytes(), &res)
-
-	assert.Nil(t, err)
 	assert.Equal(t, http.StatusOK, w.Code)
 	assert.True(t, userMockRepository.Has(u))
-	assert.Equal(t, expectedOkStatus, res["status"])
+	assert.Empty(t, w.Body)
 }
 
 func TestController_RegisterUserMailExistsError(t *testing.T) {
@@ -131,13 +127,9 @@ func TestController_RegisterBoxSuccess(t *testing.T) {
 
 	controller.RegisterBox(c)
 
-	var res gin.H
-	err := json.Unmarshal(w.Body.Bytes(), &res)
-
-	assert.Nil(t, err)
 	assert.Equal(t, http.StatusOK, w.Code)
 	assert.True(t, boxMockRepository.Has(b))
-	assert.Equal(t, expectedOkStatus, res["status"])
+	assert.Empty(t, w.Body)
 }
 
 func TestController_RegisterBoxInternalError(t *testing.T) {

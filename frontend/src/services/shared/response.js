@@ -46,10 +46,10 @@ export class ErrorResponse extends APIResponse {
  * @return {SuccessResponse | ErrorResponse}
  */
 export function errorResponseOrDefault(apiResponse) {
-    if (apiResponse.status === 'ok') {
-        return new SuccessResponse(apiResponse.data);
-    } else {
+    if (apiResponse?.status === 'error') {
         return new ErrorResponse(apiResponse.data);
+    } else {
+        return new SuccessResponse();
     }
 }
 
@@ -60,9 +60,9 @@ export function errorResponseOrDefault(apiResponse) {
  * @return {SuccessResponse | ErrorResponse}
  */
 export function errorResponseOr(apiResponse, successResponseConstructor) {
-    if (apiResponse.status === 'ok') {
-        return successResponseConstructor(apiResponse.data);
-    } else {
+    if (apiResponse?.status === 'error') {
         return new ErrorResponse(apiResponse.data);
+    } else {
+        return successResponseConstructor(apiResponse?.data);
     }
 }

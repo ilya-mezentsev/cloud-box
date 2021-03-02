@@ -7,23 +7,11 @@ import (
 )
 
 func MakeJsonResponse(c *gin.Context, r interfaces.Response) {
-	var status int
-	if r.IsClientError() {
-		status = http.StatusBadRequest
-	} else if r.IsServerError() {
-		status = http.StatusInternalServerError
-	} else {
-		status = http.StatusOK
-	}
-
+	c.Status(r.HttpStatus())
 	if r.HasData() {
-		c.JSON(status, gin.H{
-			"status": r.GetStatus(),
+		c.JSON(r.HttpStatus(), gin.H{
+			"status": r.ApplicationStatus(),
 			"data":   r.GetData(),
-		})
-	} else {
-		c.JSON(status, gin.H{
-			"status": r.GetStatus(),
 		})
 	}
 }
