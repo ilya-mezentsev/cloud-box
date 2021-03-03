@@ -1,3 +1,6 @@
 .idea
 cbox/target
 tmp-data
+backend/libs
+backend/main
+node_modules

@@ -1,0 +1,49 @@
+version: '3'
+
+services:
+  db:
+    restart: always
+    image: postgres:latest
+    ports:
+      - 5555:5432
+    environment:
+      TZ: Europe/Moscow
+      POSTGRES_USER: cloud-box
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: cloud_box
+
+  api:
+    build: backend
+    volumes:
+      - ./backend:/var/www/apps/backend
+    depends_on:
+      - db
+
+  nginx:
+    build: nginx
+    volumes:
+      - ./frontend:/var/www/apps/frontend
+    ports:
+      - 8000:80
+    depends_on:
+      - api
+
+  cbox:
+    build:
+      context: cbox
+      args:
+        BOX_UUID: 3f1e496f-270c-4112-a48b-0c2ed465103a
+    environment:
+      BOX_UUID_FILE: /var/www/configs/box_uuid
+      BACKEND_URL: http://api:8080
+      BACKEND_AUTH_USER: foo-bar
+      BACKEND_AUTH_PASSWORD: password-baz
+      SERVER_PORT: 8888
+      SERVER_ADDRESS: localhost:8888
+      TUNNEL_ENTRYPOINT: /var/www/apps/cbox/scripts/tunnel.js
+      CBOX_ENTRYPOINT: /var/www/apps/cbox/target/debug/cbox
+    depends_on:
+      - api
+    volumes:
+      - ./cbox:/var/www/apps/cbox
+      - ./tmp-data:/media
