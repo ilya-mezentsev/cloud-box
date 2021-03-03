@@ -1,18 +1,16 @@
 package response_factory
 
+import "net/http"
+
 type defaultResponse struct {
 	data interface{}
 }
 
-func (r defaultResponse) IsServerError() bool {
-	return false
+func (r defaultResponse) HttpStatus() int {
+	return http.StatusNoContent
 }
 
-func (r defaultResponse) IsClientError() bool {
-	return false
-}
-
-func (r defaultResponse) GetStatus() string {
+func (r defaultResponse) ApplicationStatus() string {
 	return statusOk
 }
 

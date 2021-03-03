@@ -56,7 +56,7 @@ async function setTunnel(tunnel) {
     const authBuffer = Buffer.from(authString);
 
     /**
-     * @type {{json: Function}}
+     * @type {{json: function(): Promise<any>, status: number}}
      */
     const res = await fetch(
         `${backendUrl}/registration/box`,
@@ -72,12 +72,10 @@ async function setTunnel(tunnel) {
             }),
         }
     );
-    /**
-     * @type {{status: String, data: Object}}
-     */
-    const resBody = await res.json();
-
-    if (resBody.status !== "ok") {
-        console.warn(`Api responded with error: ${JSON.stringify(resBody.data)}`);
+    if (res.status < 200 || res.status > 299) {
+        console.warn(`
+            Api responded with unsuccessful status: ${res.status}
+            Body: ${JSON.stringify(await res.json())}
+        `);
     }
 }

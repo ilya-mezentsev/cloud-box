@@ -25,8 +25,8 @@ var (
 	mockRepository      = &services.UserCredentialsRepositoryMock{}
 	defaultConfigs      = config.Default()
 	service             = New(defaultConfigs, mockRepository)
-	expectedOkStatus    = response_factory.DefaultResponse().GetStatus()
-	expectedErrorStatus = response_factory.ServerError(nil).GetStatus()
+	expectedOkStatus    = response_factory.DefaultResponse().ApplicationStatus()
+	expectedErrorStatus = response_factory.ServerError(nil).ApplicationStatus()
 )
 
 func init() {
@@ -51,10 +51,9 @@ func TestService_GetSessionSuccess(t *testing.T) {
 
 	assert.Nil(t, err)
 	assert.Equal(t, services.ExistsHash, cookie)
-	assert.Equal(t, expectedOkStatus, response.GetStatus())
+	assert.Equal(t, expectedOkStatus, response.ApplicationStatus())
 	assert.True(t, response.HasData())
-	assert.False(t, response.IsClientError())
-	assert.False(t, response.IsServerError())
+	assert.Equal(t, http.StatusOK, response.HttpStatus())
 	assert.Equal(t, cookie, response.GetData().(models.SessionResponse).Hash)
 }
 
@@ -67,10 +66,9 @@ func TestService_GetSessionHashDoesNotExists(t *testing.T) {
 
 	response := service.GetSession(c)
 
-	assert.Equal(t, expectedErrorStatus, response.GetStatus())
+	assert.Equal(t, expectedErrorStatus, response.ApplicationStatus())
 	assert.True(t, response.HasData())
-	assert.True(t, response.IsClientError())
-	assert.False(t, response.IsServerError())
+	assert.Equal(t, http.StatusBadRequest, response.HttpStatus())
 	assert.Equal(t, hashDoesNotExistErrorCode, response.GetData().(errors.ServiceError).Code)
 	assert.Equal(t, hashDoesNotExistErrorDescription, response.GetData().(errors.ServiceError).Description)
 }
@@ -84,12 +82,9 @@ func TestService_GetSessionWithoutCookie(t *testing.T) {
 
 	response := service.GetSession(c)
 
-	assert.Equal(t, expectedErrorStatus, response.GetStatus())
-	assert.True(t, response.HasData())
-	assert.True(t, response.IsClientError())
-	assert.False(t, response.IsServerError())
-	assert.Equal(t, noCookieErrorCode, response.GetData().(errors.ServiceError).Code)
-	assert.Equal(t, noCookieErrorDescription, response.GetData().(errors.ServiceError).Description)
+	assert.Equal(t, expectedOkStatus, response.ApplicationStatus())
+	assert.False(t, response.HasData())
+	assert.Equal(t, http.StatusNoContent, response.HttpStatus())
 }
 
 func TestService_GetSessionUnknownError(t *testing.T) {
@@ -101,10 +96,9 @@ func TestService_GetSessionUnknownError(t *testing.T) {
 
 	response := service.GetSession(c)
 
-	assert.Equal(t, expectedErrorStatus, response.GetStatus())
+	assert.Equal(t, expectedErrorStatus, response.ApplicationStatus())
 	assert.True(t, response.HasData())
-	assert.False(t, response.IsClientError())
-	assert.True(t, response.IsServerError())
+	assert.Equal(t, http.StatusInternalServerError, response.HttpStatus())
 	assert.Equal(t, error_codes.UnknownRepositoryErrorCode, response.GetData().(errors.ServiceError).Code)
 	assert.Equal(t, error_codes.UnknownRepositoryErrorDescription, response.GetData().(errors.ServiceError).Description)
 }
@@ -127,10 +121,9 @@ func TestService_CreateSessionSuccess(t *testing.T) {
 		w.Header().Get("Set-Cookie"),
 		fmt.Sprintf("%s=%s", cookieTokenKey, services.ExistsHash),
 	))
-	assert.Equal(t, expectedOkStatus, response.GetStatus())
+	assert.Equal(t, expectedOkStatus, response.ApplicationStatus())
 	assert.True(t, response.HasData())
-	assert.False(t, response.IsClientError())
-	assert.False(t, response.IsServerError())
+	assert.Equal(t, http.StatusOK, response.HttpStatus())
 	assert.Equal(t, services.ExistsHash, response.GetData().(models.SessionResponse).Hash)
 }
 
@@ -148,10 +141,9 @@ func TestService_CreateSessionInvalidCredentials(t *testing.T) {
 	response := service.CreateSession(c, u)
 
 	assert.Equal(t, "", w.Header().Get("Set-Cookie"))
-	assert.Equal(t, expectedErrorStatus, response.GetStatus())
+	assert.Equal(t, expectedErrorStatus, response.ApplicationStatus())
 	assert.True(t, response.HasData())
-	assert.True(t, response.IsClientError())
-	assert.False(t, response.IsServerError())
+	assert.Equal(t, http.StatusBadRequest, response.HttpStatus())
 	assert.Equal(t, error_codes.ValidationErrorCode, response.GetData().(errors.ServiceError).Code)
 }
 
@@ -169,10 +161,9 @@ func TestService_CreateSessionCredentialsNotFound(t *testing.T) {
 	response := service.CreateSession(c, u)
 
 	assert.Equal(t, "", w.Header().Get("Set-Cookie"))
-	assert.Equal(t, expectedErrorStatus, response.GetStatus())
+	assert.Equal(t, expectedErrorStatus, response.ApplicationStatus())
 	assert.True(t, response.HasData())
-	assert.True(t, response.IsClientError())
-	assert.False(t, response.IsServerError())
+	assert.Equal(t, http.StatusBadRequest, response.HttpStatus())
 	assert.Equal(t, credentialsNotFoundErrorCode, response.GetData().(errors.ServiceError).Code)
 	assert.Equal(t, credentialsNotFoundErrorDescription, response.GetData().(errors.ServiceError).Description)
 }
@@ -191,10 +182,9 @@ func TestService_CreateSessionUnknownError(t *testing.T) {
 	response := service.CreateSession(c, u)
 
 	assert.Equal(t, "", w.Header().Get("Set-Cookie"))
-	assert.Equal(t, expectedErrorStatus, response.GetStatus())
+	assert.Equal(t, expectedErrorStatus, response.ApplicationStatus())
 	assert.True(t, response.HasData())
-	assert.False(t, response.IsClientError())
-	assert.True(t, response.IsServerError())
+	assert.Equal(t, http.StatusInternalServerError, response.HttpStatus())
 	assert.Equal(t, error_codes.UnknownRepositoryErrorCode, response.GetData().(errors.ServiceError).Code)
 	assert.Equal(t, error_codes.UnknownRepositoryErrorDescription, response.GetData().(errors.ServiceError).Description)
 }
@@ -212,57 +202,60 @@ func TestService_DeleteSessionSuccess(t *testing.T) {
 		w.Header().Get("Set-Cookie"),
 		fmt.Sprintf("%s=%s", cookieTokenKey, ""),
 	))
-	assert.Equal(t, expectedOkStatus, response.GetStatus())
+	assert.Equal(t, expectedOkStatus, response.ApplicationStatus())
 	assert.Nil(t, response.GetData())
 	assert.False(t, response.HasData())
-	assert.False(t, response.IsClientError())
-	assert.False(t, response.IsServerError())
+	assert.Equal(t, http.StatusNoContent, response.HttpStatus())
 }
 
-func TestService_HasSessionTrue(t *testing.T) {
+func TestService_CheckSessionHasExistsToken(t *testing.T) {
 	w := httptest.NewRecorder()
 	c, _ := gin.CreateTestContext(w)
 	c.Request = controllers.CreateRequestWithCookie(cookieTokenKey, services.ExistsHash)
 
-	h := service.HasSession()
+	response := service.CheckSession(c)
 
-	h(c)
-
-	assert.Equal(t, http.StatusOK, w.Code)
+	assert.Nil(t, response)
 }
 
-func TestService_HasSessionFalse(t *testing.T) {
+func TestService_CheckSessionNoToken(t *testing.T) {
 	w := httptest.NewRecorder()
 	c, _ := gin.CreateTestContext(w)
 	c.Request = controllers.CreateSimpleRequest()
 
-	h := service.HasSession()
+	response := service.CheckSession(c)
 
-	h(c)
-
-	assert.Equal(t, http.StatusForbidden, w.Code)
+	assert.Equal(t, expectedErrorStatus, response.ApplicationStatus())
+	assert.True(t, response.HasData())
+	assert.Equal(t, http.StatusUnauthorized, response.HttpStatus())
+	assert.Equal(t, noCookieErrorCode, response.GetData().(errors.ServiceError).Code)
+	assert.Equal(t, noCookieErrorDescription, response.GetData().(errors.ServiceError).Description)
 }
 
-func TestService_HasSessionNotExists(t *testing.T) {
+func TestService_CheckSessionNotExists(t *testing.T) {
 	w := httptest.NewRecorder()
 	c, _ := gin.CreateTestContext(w)
 	c.Request = controllers.CreateRequestWithCookie(cookieTokenKey, "not-exists")
 
-	h := service.HasSession()
+	response := service.CheckSession(c)
 
-	h(c)
-
-	assert.Equal(t, http.StatusForbidden, w.Code)
+	assert.Equal(t, expectedErrorStatus, response.ApplicationStatus())
+	assert.True(t, response.HasData())
+	assert.Equal(t, http.StatusForbidden, response.HttpStatus())
+	assert.Equal(t, hashDoesNotExistErrorCode, response.GetData().(errors.ServiceError).Code)
+	assert.Equal(t, hashDoesNotExistErrorDescription, response.GetData().(errors.ServiceError).Description)
 }
 
-func TestService_HasSessionInternalError(t *testing.T) {
+func TestService_CheckSessionInternalError(t *testing.T) {
 	w := httptest.NewRecorder()
 	c, _ := gin.CreateTestContext(w)
 	c.Request = controllers.CreateRequestWithCookie(cookieTokenKey, services.BadHash)
 
-	h := service.HasSession()
+	response := service.CheckSession(c)
 
-	h(c)
-
-	assert.Equal(t, http.StatusInternalServerError, w.Code)
+	assert.Equal(t, expectedErrorStatus, response.ApplicationStatus())
+	assert.True(t, response.HasData())
+	assert.Equal(t, http.StatusInternalServerError, response.HttpStatus())
+	assert.Equal(t, error_codes.UnknownRepositoryErrorCode, response.GetData().(errors.ServiceError).Code)
+	assert.Equal(t, error_codes.UnknownRepositoryErrorDescription, response.GetData().(errors.ServiceError).Description)
 }

@@ -11,6 +11,10 @@ Each API response can contains error in format:
   }
 }
 ```
+### Default response
+```
+HTTP 204
+```
 
 ### POST /registration/user - perform user registration
 #### Body:
@@ -20,12 +24,7 @@ Each API response can contains error in format:
   "password": "user-password"
 }
 ```
-#### Ok response:
-```json5
-{
-  "status": "ok"
-}
-```
+#### Ok response - Default
 #### Error codes
 * validation-error - at least one provided field value is invalid
 * mail-already-exists - provided mail is already registered in service
@@ -33,7 +32,8 @@ Each API response can contains error in format:
 
 
 ### GET /session - get session from cookie
-#### Ok response:
+### Ok response (if token is not present in cookies) - Default
+#### Ok response (if token is present in cookies):
 ```json5
 {
   "status": "ok",
@@ -43,7 +43,6 @@ Each API response can contains error in format:
 }
 ```
 #### Error codes:
-* no-token-in-cookie - request has not required cookie
 * hash-does-not-exist - hash in a cookie does not exist in DB
 * repository-error - DB error (should not happen)
 
@@ -70,12 +69,7 @@ Each API response can contains error in format:
 * repository-error - DB error (should not happen)
 
 ### DELETE /session - delete a session (sign out)
-#### Ok response:
-```json5
-{
-  "status": "ok"
-}
-```
+#### Ok response - Default
 
 ### GET /boxes/:account_hash - get boxes owned to account
 #### Auth - cookie
@@ -104,12 +98,7 @@ Each API response can contains error in format:
   "uuid": "c4f81f0d-60e0-44d0-976c-bac385fe6ae9", // box uuid
 }
 ```
-#### Ok response:
-```json5
-{
-  "status": "ok"
-}
-```
+#### Ok response - Default
 #### Error codes:
 * validation-error - at least one provided field value is invalid
 * repository-error - DB error (should not happen)
@@ -123,12 +112,7 @@ Each API response can contains error in format:
   "uuid": "c4f81f0d-60e0-44d0-976c-bac385fe6ae9", // box uuid
 }
 ```
-#### Ok response:
-```json5
-{
-  "status": "ok"
-}
-```
+#### Ok response - Default
 #### Error codes:
 * validation-error - at least one provided field value is invalid
 * repository-error - DB error (should not happen)
@@ -142,12 +126,7 @@ Each API response can contains error in format:
   "uuid": "c4f81f0d-60e0-44d0-976c-bac385fe6ae9"
 }
 ```
-#### Ok response:
-```json5
-{
-  "status": "ok"
-}
-```
+#### Ok response - Default
 #### Error codes:
 * validation-error - at least one provided field value is invalid
 * repository-error - DB error (should not happen)

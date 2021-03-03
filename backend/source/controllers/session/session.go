@@ -15,6 +15,18 @@ func New(sessionService session.Service) Controller {
 	return Controller{sessionService}
 }
 
+func (c Controller) HasSession() gin.HandlerFunc {
+	return func(context *gin.Context) {
+		interceptResponse := c.sessionService.CheckSession(context)
+		if interceptResponse != nil {
+			presenter.MakeJsonResponse(context, interceptResponse)
+			context.Abort()
+		} else {
+			context.Next()
+		}
+	}
+}
+
 func (c Controller) GetSession(context *gin.Context) {
 	presenter.MakeJsonResponse(
 		context,

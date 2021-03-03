@@ -13,7 +13,6 @@ import (
 	"errors"
 	"github.com/gin-gonic/gin"
 	"gopkg.in/go-playground/validator.v9"
-	"net/http"
 )
 
 type Service struct {
@@ -31,39 +30,42 @@ func New(
 	}
 }
 
-func (s Service) HasSession() gin.HandlerFunc {
-	return func(c *gin.Context) {
-		cookie, err := c.Cookie(cookieTokenKey)
-		if err != nil {
-			c.AbortWithStatus(http.StatusForbidden)
-			return
-		}
+func (s Service) CheckSession(c *gin.Context) interfaces.Response {
+	cookie, err := c.Cookie(cookieTokenKey)
+	if err != nil {
+		return response_factory.UnauthorizedError(se.ServiceError{
+			Code:        noCookieErrorCode,
+			Description: noCookieErrorDescription,
+		})
+	}
 
-		hashExists, err := s.repository.HashExists(cookie)
-		if err != nil {
-			logger.WithFields(logger.Fields{
-				MessageTemplate: "Unable to check token existence: %v",
-				Args: []interface{}{
-					err,
-				},
-			}, logger.Error)
+	hashExists, err := s.repository.HashExists(cookie)
+	if err != nil {
+		logger.WithFields(logger.Fields{
+			MessageTemplate: "Unable to check token existence: %v",
+			Args: []interface{}{
+				err,
+			},
+		}, logger.Error)
 
-			c.AbortWithStatus(http.StatusInternalServerError)
-		} else if !hashExists {
-			c.AbortWithStatus(http.StatusForbidden)
-		} else {
-			c.Next()
-		}
+		return response_factory.ServerError(se.ServiceError{
+			Code:        error_codes.UnknownRepositoryErrorCode,
+			Description: error_codes.UnknownRepositoryErrorDescription,
+		})
+	} else if !hashExists {
+		return response_factory.ForbiddenError(se.ServiceError{
+			Code:        hashDoesNotExistErrorCode,
+			Description: hashDoesNotExistErrorDescription,
+		})
+	} else {
+		return nil
 	}
 }
 
 func (s Service) GetSession(c *gin.Context) interfaces.Response {
 	cookie, err := c.Cookie(cookieTokenKey)
 	if err != nil {
-		return response_factory.ClientError(se.ServiceError{
-			Code:        noCookieErrorCode,
-			Description: noCookieErrorDescription,
-		})
+		return response_factory.DefaultResponse()
 	}
 
 	hashExists, err := s.repository.HashExists(cookie)
