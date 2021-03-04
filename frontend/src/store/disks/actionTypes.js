@@ -1,4 +1,8 @@
+import { ACTIONS as ERROR_ACTIONS } from '../error/actionTypes';
 
 export const ACTIONS = {
     SET_DISKS: 'set:disks',
+
+    FAILED_TO_FETCH_DISKS: ERROR_ACTIONS.SET_ERROR,
+    FAILED_TO_PERFORM_DISKS_ACTION: ERROR_ACTIONS.SET_UNKNOWN_ERROR,
 };

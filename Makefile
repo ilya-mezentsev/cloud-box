@@ -14,6 +14,8 @@ BACKEND_CONFIG_PATH := $(BACKEND_DIR)/config/main.json
 BACKEND_LIBS_PATH := $(BACKEND_DIR)/libs
 BACKEND_SOURCE_PATH := $(BACKEND_DIR)/source
 
+FRONTEND_SOURCE_PATH := $(FRONTEND_DIR)/src
+
 build: box-build backend-build frontend-build containers-build
 
 run: containers-run
@@ -75,6 +77,9 @@ frontend-tests:
 
 frontend-check:
 	cd $(FRONTEND_DIR) && npm run lint
+
+frontend-calc-lines:
+	( find $(FRONTEND_SOURCE_PATH) -name '*.*' -print0 | xargs -0 cat ) | wc -l
 
 containers-run:
 	docker-compose -f $(DOCKER_COMPOSE_FILE) -p $(PROJECT_NAME) up

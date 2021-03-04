@@ -1,14 +1,13 @@
-import { initialState } from '../state/initial';
 import { ACTIONS } from './actionTypes';
 import { buildPath, folderPathFromFilePath, filenameFromFilePath } from './helper';
 
 /**
  *
- * @param {Object} state
+ * @param {Array<{path: string, nodes: Array<{nodeType: 'folder' | 'file' | 'unknown', name: string}>}>} state
  * @param {{type: string, disks: Array<string>}} action
  * @return {Object}
  */
-export function fsReducer(state = initialState, action) {
+export function fsReducer(state = [], action) {
     if (ACTIONS.folderActions.includes(action.type)) {
         return folderReducer(state, action);
     } else if (ACTIONS.fileActions.includes(action.type)) {
@@ -20,11 +19,11 @@ export function fsReducer(state = initialState, action) {
 
 /**
  *
- * @param {Object} state
+ * @param {Array<{path: string, nodes: Array<{nodeType: 'folder' | 'file' | 'unknown', name: string}>}>} state
  * @param {{type: string, folderData: any}} action
- * @return {Object}
+ * @return {Array<{path: string, nodes: Array<{nodeType: 'folder' | 'file' | 'unknown', name: string}>}>}
  */
-function folderReducer(state = initialState, action) {
+function folderReducer(state = [], action) {
     switch (action.type) {
         case ACTIONS.SET_FOLDER:
             return onSetFolder(state, action.folderData);
@@ -45,66 +44,60 @@ function folderReducer(state = initialState, action) {
 
 /**
  *
- * @param {Object} state
+ * @param {Array<{path: string, nodes: Array<{nodeType: 'folder' | 'file' | 'unknown', name: string}>}>} state
  * @param {{
  *  nodes: Array<{nodeType: 'folder' | 'file' | 'unknown', name: string}>,
  *  folderPath: string,
  *  diskName: string,
  *  boxUUID: string,
  * }} folderData
- * @return {Object}
+ * @return {Array<{path: string, nodes: Array<{nodeType: 'folder' | 'file' | 'unknown', name: string}>}>}
  */
-function onSetFolder(state = initialState, folderData) {
-    return {
-        ...state,
-        fs: state.fs.concat({
-            path: buildPath({
-                boxUUID: folderData.boxUUID,
-                diskName: folderData.diskName,
-                components: [folderData.folderPath],
-            }),
-            nodes: folderData.nodes,
+function onSetFolder(state = [], folderData) {
+    return state.concat({
+        path: buildPath({
+            boxUUID: folderData.boxUUID,
+            diskName: folderData.diskName,
+            components: [folderData.folderPath],
         }),
-    };
+        nodes: folderData.nodes,
+    });
 }
 
 /**
  *
- * @param {Object} state
+ * @param {Array<{path: string, nodes: Array<{nodeType: 'folder' | 'file' | 'unknown', name: string}>}>} state
  * @param {{diskName: string, rootPath: string, folderName: string, boxUUID: string}} folderData
- * @return {Object}
+ * @return {Array<{path: string, nodes: Array<{nodeType: 'folder' | 'file' | 'unknown', name: string}>}>}
  */
-function onCreateFolder(state = initialState, folderData) {
-    return {
-        ...state,
-        fs: state.fs.concat({
-            path: buildPath({
-                boxUUID: folderData.boxUUID,
-                diskName: folderData.diskName,
-                components: [folderData.rootPath, folderData.folderName],
-            }),
-            nodes: [],
+function onCreateFolder(state = [], folderData) {
+    return state.concat({
+        path: buildPath({
+            boxUUID: folderData.boxUUID,
+            diskName: folderData.diskName,
+            components: [folderData.rootPath, folderData.folderName],
         }),
-    };
+        nodes: [],
+    });
 }
 
 /**
  *
- * @param {Object} state
+ * @param {Array<{path: string, nodes: Array<{nodeType: 'folder' | 'file' | 'unknown', name: string}>}>} state
  * @param {{diskName: string, rootPath: string, oldName: string, newName: string, boxUUID: string}} folderData
- * @return {Object}
+ * @return {Array<{path: string, nodes: Array<{nodeType: 'folder' | 'file' | 'unknown', name: string}>}>}
  */
-function onRenameFolder(state = initialState, folderData) {
+function onRenameFolder(state = [], folderData) {
     const renamedFolderPath = buildPath({
         boxUUID: folderData.boxUUID,
         diskName: folderData.diskName,
         components: [folderData.rootPath, folderData.oldName],
     });
-    const folderIndex = state.fs.findIndex(folder => folder.path === renamedFolderPath);
+    const folderIndex = state.findIndex(folder => folder.path === renamedFolderPath);
 
     if (folderIndex >= 0) {
-        const existsFolder = state.fs[folderIndex];
-        state.fs.splice(folderIndex, 1, {
+        const existsFolder = state[folderIndex];
+        state.splice(folderIndex, 1, {
             path: buildPath({
                 boxUUID: folderData.boxUUID,
                 diskName: folderData.diskName,
@@ -119,30 +112,27 @@ function onRenameFolder(state = initialState, folderData) {
 
 /**
  *
- * @param {Object} state
+ * @param {Array<{path: string, nodes: Array<{nodeType: 'folder' | 'file' | 'unknown', name: string}>}>} state
  * @param {{diskName: string, folderPath: string, boxUUID: string}} folderData
- * @return {Object}
+ * @return {Array<{path: string, nodes: Array<{nodeType: 'folder' | 'file' | 'unknown', name: string}>}>}
  */
-function onDeleteFolder(state = initialState, folderData) {
+function onDeleteFolder(state = [], folderData) {
     const deletedFolderPath = buildPath({
         boxUUID: folderData.boxUUID,
         diskName: folderData.diskName,
         components: [folderData.folderPath],
     });
 
-    return {
-        ...state,
-        fs: state.fs.filter(folder => !folder.path.startsWith(deletedFolderPath)),
-    };
+    return state.filter(folder => !folder.path.startsWith(deletedFolderPath));
 }
 
 /**
  *
- * @param {Object} state
+ * @param {Array<{path: string, nodes: Array<{nodeType: 'folder' | 'file' | 'unknown', name: string}>}>} state
  * @param {{type: string, fileData: any}} action
- * @return {Object}
+ * @return {Array<{path: string, nodes: Array<{nodeType: 'folder' | 'file' | 'unknown', name: string}>}>}
  */
-function fileReducer(state = initialState, action) {
+function fileReducer(state = [], action) {
     switch (action.type) {
         case ACTIONS.CREATE_FILE:
             return onCreateFile(state, action.fileData);
@@ -160,17 +150,17 @@ function fileReducer(state = initialState, action) {
 
 /**
  *
- * @param {Object} state
+ * @param {Array<{path: string, nodes: Array<{nodeType: 'folder' | 'file' | 'unknown', name: string}>}>} state
  * @param {{diskName: string, folderPath: string, file: File, boxUUID: string}} fileData
- * @return {Object}
+ * @return {Array<{path: string, nodes: Array<{nodeType: 'folder' | 'file' | 'unknown', name: string}>}>}
  */
-function onCreateFile(state = initialState, fileData) {
+function onCreateFile(state = [], fileData) {
     const newFileFolderPath = buildPath({
         boxUUID: fileData.boxUUID,
         diskName: fileData.diskName,
         components: [fileData.folderPath],
     });
-    const newFileFolder = state.fs.find(folder => folder.path === newFileFolderPath);
+    const newFileFolder = state.find(folder => folder.path === newFileFolderPath);
     if (newFileFolder) {
         newFileFolder.nodes.push({
             nodeType: 'file',
@@ -183,17 +173,17 @@ function onCreateFile(state = initialState, fileData) {
 
 /**
  *
- * @param {Object} state
+ * @param {Array<{path: string, nodes: Array<{nodeType: 'folder' | 'file' | 'unknown', name: string}>}>} state
  * @param {{diskName: string, folderPath: string, oldName: string, newName: string, boxUUID: string}} fileData
- * @return {Object}
+ * @return {Array<{path: string, nodes: Array<{nodeType: 'folder' | 'file' | 'unknown', name: string}>}>}
  */
-function onRenameFile(state = initialState, fileData) {
+function onRenameFile(state = [], fileData) {
     const renamedFileFolderPath = buildPath({
         boxUUID: fileData.boxUUID,
         diskName: fileData.diskName,
         components: [fileData.folderPath],
     });
-    const renamedFileFolder = state.fs.find(folder => folder.path === renamedFileFolderPath);
+    const renamedFileFolder = state.find(folder => folder.path === renamedFileFolderPath);
     if (renamedFileFolder) {
         const existsFileIndex = renamedFileFolder.nodes.findIndex(n => n.name === fileData.oldName);
         if (existsFileIndex >= 0) {
@@ -210,17 +200,17 @@ function onRenameFile(state = initialState, fileData) {
 
 /**
  *
- * @param {Object} state
+ * @param {Array<{path: string, nodes: Array<{nodeType: 'folder' | 'file' | 'unknown', name: string}>}>} state
  * @param {{diskName: string, filePath: string, boxUUID: string}} fileData
- * @return {Object}
+ * @return {Array<{path: string, nodes: Array<{nodeType: 'folder' | 'file' | 'unknown', name: string}>}>}
  */
-function onDeleteFile(state = initialState, fileData) {
+function onDeleteFile(state = [], fileData) {
     const deletedFileFolderPath = folderPathFromFilePath({
         boxUUID: fileData.boxUUID,
         diskName: fileData.diskName,
         filePath: fileData.filePath,
     });
-    const deletedFileFolder = state.fs.find(folder => folder.path === deletedFileFolderPath);
+    const deletedFileFolder = state.find(folder => folder.path === deletedFileFolderPath);
     if (deletedFileFolder) {
         const deletedFilename = filenameFromFilePath(fileData.filePath)
         deletedFileFolder.nodes = deletedFileFolder.nodes.filter(node => node.name !== deletedFilename);

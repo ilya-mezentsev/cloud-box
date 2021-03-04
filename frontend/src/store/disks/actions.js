@@ -21,10 +21,16 @@ export function fetchDisks({tunnelDomain, boxUUID}) {
                     disks: disksResponse.data(),
                 });
             } else {
-                console.error(`Error while fetching disks: ${JSON.stringify(disksResponse.data())}`);
+                dispatch({
+                    type: ACTIONS.FAILED_TO_FETCH_DISKS,
+                    error: disksResponse.data(),
+                });
             }
         } catch (e) {
-            console.error(e);
+            dispatch({
+                type: ACTIONS.FAILED_TO_PERFORM_DISKS_ACTION,
+                error: e,
+            });
         }
     };
 }

@@ -13,34 +13,23 @@ export function signIn({ mail, password }) {
             const sessionResponse = await createSession({mail, password});
 
             if (sessionResponse.isOk()) {
-                onOkSessionResponse(dispatch, sessionResponse);
+                dispatch({
+                    type: ACTIONS.SET_SESSION,
+                    sessionHash: sessionResponse.data().hash,
+                });
             } else {
-                onErrorSessionResponse(sessionResponse);
+                dispatch({
+                    type: ACTIONS.FAILED_TO_CREATE_SESSION,
+                    error: sessionResponse.data(),
+                });
             }
         } catch (e) {
-            console.error(e);
+            dispatch({
+                type: ACTIONS.FAILED_TO_PERFORM_SESSION_ACTION,
+                error: e,
+            });
         }
     };
-}
-
-/**
- *
- * @param {function({type: string, sessionHash: string})} dispatch
- * @param {SessionResponse} session
- */
-function onOkSessionResponse(dispatch, session) {
-    dispatch({
-        type: ACTIONS.SET_SESSION,
-        sessionHash: session.data().hash,
-    });
-}
-
-/**
- *
- * @param {ErrorResponse} session
- */
-function onErrorSessionResponse(session) {
-    console.log(`Error while trying to create session: ${JSON.stringify(session.data())}`);
 }
 
 /**
@@ -53,12 +42,21 @@ export function fetchSession() {
             const sessionResponse = await getSession();
 
             if (sessionResponse.isOk()) {
-                onOkSessionResponse(dispatch, sessionResponse);
+                dispatch({
+                    type: ACTIONS.SET_SESSION,
+                    sessionHash: sessionResponse.data().hash,
+                });
             } else {
-                onErrorSessionResponse(sessionResponse);
+                dispatch({
+                    type: ACTIONS.FAILED_TO_GET_SESSION,
+                    error: sessionResponse.data(),
+                });
             }
         } catch (e) {
-            console.error(e);
+            dispatch({
+                type: ACTIONS.FAILED_TO_PERFORM_SESSION_ACTION,
+                error: e,
+            });
         }
     };
 }
@@ -77,10 +75,16 @@ export function signOut() {
                     type: ACTIONS.UNSET_SESSION,
                 });
             } else {
-                onErrorSessionResponse(deleteSessionResponse);
+                dispatch({
+                    type: ACTIONS.FAILED_TO_DELETE_SESSION,
+                    error: deleteSessionResponse.data(),
+                });
             }
         } catch (e) {
-            console.error(e);
+            dispatch({
+                type: ACTIONS.FAILED_TO_PERFORM_SESSION_ACTION,
+                error: e,
+            });
         }
     };
 }

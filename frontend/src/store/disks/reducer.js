@@ -1,19 +1,15 @@
-import { initialState } from '../state/initial';
 import { ACTIONS } from './actionTypes';
 
 /**
  *
- * @param {Object} state
+ * @param {Array<string>} state
  * @param {{type: string, disks: Array<string>}} action
- * @return {Object}
+ * @return {Array<string>}
  */
-export function disksReducer(state = initialState, action) {
+export function disksReducer(state = [], action) {
     switch (action.type) {
         case ACTIONS.SET_DISKS:
-            return {
-                ...state,
-                disks: action.disks,
-            };
+            return action.disks;
 
         default:
             return state;
