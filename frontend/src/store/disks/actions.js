@@ -7,7 +7,7 @@ import { ACTIONS } from './actionTypes';
  * @param {string} boxUUID
  * @return {function(*): Promise<void>}
  */
-export function fetchDisks({tunnelDomain, boxUUID}) {
+export function fetchDisks({ tunnelDomain, boxUUID }) {
     return async dispatch => {
         try {
             const disksResponse = await getDisks({

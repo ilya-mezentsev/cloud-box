@@ -6,7 +6,7 @@ import {
     errorResponseOrDefault,
 } from '../shared';
 
-class AccountBoxesResponse extends SuccessResponse {
+export class AccountBoxesResponse extends SuccessResponse {
     /**
      *
      * @return {Array<{tunnelDomain: string, uuid: string, alias: string}>}

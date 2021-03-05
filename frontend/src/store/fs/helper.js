@@ -29,9 +29,9 @@ export function folderPathFromFilePath({
 }) {
     let fileFolderPath = '';
     const lastSlashIndex = filePath.lastIndexOf('/');
-    if (lastSlashIndex >= 0) {
-        fileFolderPath = filePath.substring(0, lastSlashIndex);
-    }
+    fileFolderPath = lastSlashIndex >= 0
+        ? filePath.substring(0, lastSlashIndex)
+        : filePath;
 
     return buildPath({
         boxUUID,

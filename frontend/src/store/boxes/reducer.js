@@ -1,4 +1,4 @@
-import { ACTIONS } from '../session/actionTypes';
+import { ACTIONS } from './actionTypes';
 
 /**
  *

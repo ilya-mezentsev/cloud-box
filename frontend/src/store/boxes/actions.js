@@ -41,10 +41,14 @@ export function fetchBoxes(accountHash) {
  * @param {string} alias
  * @return {function(*): Promise<void>}
  */
-export function bindBox({accountHash, boxUUID, alias}) {
+export function bindBox({ accountHash, boxUUID, alias }) {
     return async dispatch => {
         try {
-            const bindBoxResponse = await bindBoxAPI({accountHash, boxUUID, alias});
+            const bindBoxResponse = await bindBoxAPI({
+                accountHash,
+                boxUUID,
+                alias,
+            });
 
             if (bindBoxResponse.isOk()) {
                 // fixme: how to understand in container that action without response is performed successfully?

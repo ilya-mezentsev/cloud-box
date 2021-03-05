@@ -10,7 +10,12 @@ import { makeBoxRequestHeaders } from './shared';
  * @param {string} boxUUID
  * @return {string}
  */
-export function getFile({tunnelDomain, diskName, filePath, boxUUID}) {
+export function getFile({
+    tunnelDomain,
+    diskName,
+    filePath,
+    boxUUID,
+}) {
     // todo how to pass boxUUID here?
     return `${tunnelDomain}/file?file_path=${filePath}&disk_name=${diskName}`;
 }

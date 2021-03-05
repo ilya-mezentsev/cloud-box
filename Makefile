@@ -73,7 +73,14 @@ frontend-build:
 	cd $(FRONTEND_DIR) && npm i && npm run build
 
 frontend-tests:
-	cd $(FRONTEND_DIR) && npm run test -- --watchAll=false
+	cd $(FRONTEND_DIR) && npm run test -- --watchAll=false --silent
+
+frontend-tests-coverage:
+	cd $(FRONTEND_DIR) && npm run test -- \
+	--watchAll=false --coverage --silent --collectCoverageFrom=src/**/*.js \
+	--collectCoverageFrom=!src/reportWebVitals.js \
+	--collectCoverageFrom=!src/index.js \
+	--collectCoverageFrom=!src/services/shared/request.js
 
 frontend-check:
 	cd $(FRONTEND_DIR) && npm run lint

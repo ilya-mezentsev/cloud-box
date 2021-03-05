@@ -1,7 +1,7 @@
 import { ACTIONS } from './actionTypes';
 
 export function clearError() {
-    return dispatch => dispatch({
+    return {
         type: ACTIONS.UNSET_ERROR,
-    });
+    };
 }
