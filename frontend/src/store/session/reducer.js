@@ -1,25 +1,18 @@
 import { ACTIONS } from './actionTypes';
-import { initialState } from '../state/initial';
 
 /**
  *
- * @param {{hash: string|null}} state
+ * @param {string} state
  * @param {{type: string, sessionHash?: string}} action
- * @return {Object}
+ * @return {string}
  */
-export function sessionReducer(state = initialState, action) {
+export function sessionReducer(state = '', action) {
     switch (action.type) {
         case ACTIONS.SET_SESSION:
-            return {
-                ...state,
-                hash: action.sessionHash,
-            };
+            return action.sessionHash;
 
         case ACTIONS.UNSET_SESSION:
-            return {
-                ...state,
-                hash: null,
-            };
+            return '';
 
         default:
             return state;

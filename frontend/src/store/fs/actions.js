@@ -44,10 +44,16 @@ export function getFolder({
                     },
                 });
             } else {
-                console.error(`Error while fetching folder data: ${JSON.stringify(folderResponse.data())}`);
+                dispatch({
+                    type: ACTIONS.FAILED_TO_FETCH_FOLDER,
+                    error: folderResponse.data(),
+                });
             }
         } catch (e) {
-            console.error(e);
+            dispatch({
+                type: ACTIONS.FAILED_TO_PERFORM_FS_ACTION,
+                error: e,
+            });
         }
     };
 }
@@ -89,10 +95,16 @@ export function createFolder({
                     },
                 })
             } else {
-                console.error(`Error while creating folder: ${JSON.stringify(createFolderResponse.data())}`);
+                dispatch({
+                    type: ACTIONS.FAILED_TO_CREATE_FOLDER,
+                    error: createFolderResponse.data(),
+                });
             }
         } catch (e) {
-            console.error(e);
+            dispatch({
+                type: ACTIONS.FAILED_TO_PERFORM_FS_ACTION,
+                error: e,
+            });
         }
     };
 }
@@ -138,10 +150,16 @@ export function renameFolder({
                     },
                 });
             } else {
-                console.error(`Error while renaming folder: ${JSON.stringify(renameFolderResponse.data())}`);
+                dispatch({
+                    type: ACTIONS.FAILED_TO_RENAME_FOLDER,
+                    error: renameFolderResponse.data(),
+                });
             }
         } catch (e) {
-            console.error(e);
+            dispatch({
+                type: ACTIONS.FAILED_TO_PERFORM_FS_ACTION,
+                error: e,
+            });
         }
     };
 }
@@ -179,10 +197,16 @@ export function deleteFolder({
                     },
                 });
             } else {
-                console.error(`Error while deleting folder: ${JSON.stringify(deleteFolderResponse.data())}`);
+                dispatch({
+                    type: ACTIONS.FAILED_TO_DELETE_FOLDER,
+                    error: deleteFolderResponse.data(),
+                });
             }
         } catch (e) {
-            console.error(e);
+            dispatch({
+                type: ACTIONS.FAILED_TO_PERFORM_FS_ACTION,
+                error: e,
+            });
         }
     };
 }
@@ -228,10 +252,16 @@ export function createFile({
                     }
                 });
             } else {
-                console.error(`Error while creating file: ${JSON.stringify(createFileResponse.data())}`);
+                dispatch({
+                    type: ACTIONS.FAILED_TO_CREATE_FILE,
+                    error: createFileResponse.data(),
+                });
             }
         } catch (e) {
-            console.error(e);
+            dispatch({
+                type: ACTIONS.FAILED_TO_PERFORM_FS_ACTION,
+                error: e,
+            });
         }
     };
 }
@@ -277,10 +307,16 @@ export function renameFile({
                     }
                 });
             } else {
-                console.error(`Error while renaming file: ${JSON.stringify(renameFileResponse.data())}`);
+                dispatch({
+                    type: ACTIONS.FAILED_TO_RENAME_FILE,
+                    error: renameFileResponse.data(),
+                });
             }
         } catch (e) {
-            console.error(e);
+            dispatch({
+                type: ACTIONS.FAILED_TO_PERFORM_FS_ACTION,
+                error: e,
+            });
         }
     };
 }
@@ -318,10 +354,16 @@ export function deleteFile({
                     },
                 })
             } else {
-                console.error(`Error while deleting file: ${JSON.stringify(deleteFileResponse.data())}`);
+                dispatch({
+                    type: ACTIONS.FAILED_TO_DELETE_FILE,
+                    error: deleteFileResponse.data(),
+                });
             }
         } catch (e) {
-            console.error(e);
+            dispatch({
+                type: ACTIONS.FAILED_TO_PERFORM_FS_ACTION,
+                error: e,
+            });
         }
     }
 }

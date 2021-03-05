@@ -143,7 +143,7 @@ async function request({
         path,
         options,
     );
-    const resHasText = (await res.text()) !== '';
+    const resHasText = !!res.body;
     if (resHasText) {
         return await res.json();
     } else if (

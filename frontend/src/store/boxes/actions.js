@@ -20,10 +20,16 @@ export function fetchBoxes(accountHash) {
                     boxes: boxesResponse.data(),
                 });
             } else {
-                console.error(`Error while fetching boxes: ${JSON.stringify(boxesResponse.data())}`);
+                dispatch({
+                    type: ACTIONS.FAILED_TO_FETCH_BOXES,
+                    error: boxesResponse.data(),
+                });
             }
         } catch (e) {
-            console.error(e);
+            dispatch({
+                type: ACTIONS.FAILED_TO_PERFORM_BOXES_ACTION,
+                error: e,
+            });
         }
     };
 }
@@ -36,15 +42,24 @@ export function fetchBoxes(accountHash) {
  * @return {function(*): Promise<void>}
  */
 export function bindBox({accountHash, boxUUID, alias}) {
-    return async () => {
+    return async dispatch => {
         try {
             const bindBoxResponse = await bindBoxAPI({accountHash, boxUUID, alias});
 
-            if (!bindBoxResponse.isOk()) {
-                console.error(`Error while binding box with account: ${JSON.stringify(bindBoxResponse.data())}`);
+            if (bindBoxResponse.isOk()) {
+                // fixme: how to understand in container that action without response is performed successfully?
+                console.log('Box bounded successfully');
+            } else {
+                dispatch({
+                    type: ACTIONS.FAILED_TO_FETCH_BOXES,
+                    error: bindBoxResponse.data(),
+                });
             }
         } catch (e) {
-            console.error(e);
+            dispatch({
+                type: ACTIONS.FAILED_TO_PERFORM_BOXES_ACTION,
+                error: e,
+            });
         }
     };
 }
