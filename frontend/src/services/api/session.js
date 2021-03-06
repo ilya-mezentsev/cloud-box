@@ -7,7 +7,7 @@ import {
     errorResponseOr,
 } from '../shared'
 
-class SessionResponse extends SuccessResponse {
+export class SessionResponse extends SuccessResponse {
     /**
      *
      * @return {{hash: string}}

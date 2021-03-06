@@ -4,7 +4,7 @@ import { buildPath, folderPathFromFilePath, filenameFromFilePath } from './helpe
 /**
  *
  * @param {Array<{path: string, nodes: Array<{nodeType: 'folder' | 'file' | 'unknown', name: string}>}>} state
- * @param {{type: string, disks: Array<string>}} action
+ * @param {{type: string, folderData?: any, fileData?: any}} action
  * @return {Object}
  */
 export function fsReducer(state = [], action) {
@@ -23,7 +23,7 @@ export function fsReducer(state = [], action) {
  * @param {{type: string, folderData: any}} action
  * @return {Array<{path: string, nodes: Array<{nodeType: 'folder' | 'file' | 'unknown', name: string}>}>}
  */
-function folderReducer(state = [], action) {
+export function folderReducer(state = [], action) {
     switch (action.type) {
         case ACTIONS.SET_FOLDER:
             return onSetFolder(state, action.folderData);
@@ -132,7 +132,7 @@ function onDeleteFolder(state = [], folderData) {
  * @param {{type: string, fileData: any}} action
  * @return {Array<{path: string, nodes: Array<{nodeType: 'folder' | 'file' | 'unknown', name: string}>}>}
  */
-function fileReducer(state = [], action) {
+export function fileReducer(state = [], action) {
     switch (action.type) {
         case ACTIONS.CREATE_FILE:
             return onCreateFile(state, action.fileData);
@@ -189,7 +189,7 @@ function onRenameFile(state = [], fileData) {
         if (existsFileIndex >= 0) {
             const existsFile = renamedFileFolder.nodes[existsFileIndex];
             renamedFileFolder.nodes.splice(existsFileIndex, 1, {
-                nodeType: existsFile.type,
+                nodeType: existsFile.nodeType,
                 name: fileData.newName,
             });
         }

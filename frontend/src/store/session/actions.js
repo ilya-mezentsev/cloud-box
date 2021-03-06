@@ -3,6 +3,35 @@ import { getSession, createSession, deleteSession } from '../../services/api';
 
 /**
  *
+ * @return {function(*): Promise<void>}
+ */
+export function fetchSession() {
+    return async dispatch => {
+        try {
+            const sessionResponse = await getSession();
+
+            if (sessionResponse.isOk()) {
+                dispatch({
+                    type: ACTIONS.SET_SESSION,
+                    sessionHash: sessionResponse.data().hash,
+                });
+            } else {
+                dispatch({
+                    type: ACTIONS.FAILED_TO_GET_SESSION,
+                    error: sessionResponse.data(),
+                });
+            }
+        } catch (e) {
+            dispatch({
+                type: ACTIONS.FAILED_TO_PERFORM_SESSION_ACTION,
+                error: e,
+            });
+        }
+    };
+}
+
+/**
+ *
  * @param {string} mail
  * @param {string} password
  * @return {function(*): Promise<void>}
@@ -20,35 +49,6 @@ export function signIn({ mail, password }) {
             } else {
                 dispatch({
                     type: ACTIONS.FAILED_TO_CREATE_SESSION,
-                    error: sessionResponse.data(),
-                });
-            }
-        } catch (e) {
-            dispatch({
-                type: ACTIONS.FAILED_TO_PERFORM_SESSION_ACTION,
-                error: e,
-            });
-        }
-    };
-}
-
-/**
- *
- * @return {function(*): Promise<void>}
- */
-export function fetchSession() {
-    return async dispatch => {
-        try {
-            const sessionResponse = await getSession();
-
-            if (sessionResponse.isOk()) {
-                dispatch({
-                    type: ACTIONS.SET_SESSION,
-                    sessionHash: sessionResponse.data().hash,
-                });
-            } else {
-                dispatch({
-                    type: ACTIONS.FAILED_TO_GET_SESSION,
                     error: sessionResponse.data(),
                 });
             }

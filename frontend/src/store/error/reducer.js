@@ -3,7 +3,7 @@ import { ACTIONS } from './actionTypes';
 /**
  *
  * @param {{code?: string, description: string}|null} state
- * @param {{type: string, error: {code?: string, description: string}|{error: Error}}} action
+ * @param {{type: string, error?: {code?: string, description: string}|{error: Error}}} action
  * @return {{code?: string, description: string}|null}
  */
 export function errorReducer(state = null, action) {

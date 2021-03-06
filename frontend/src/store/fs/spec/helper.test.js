@@ -33,11 +33,23 @@ describe('fs helpers tests', () => {
         })).toEqual('some-uuid:/disk_name/home/user/foo');
     });
 
+    it('folder path from file path without slashes', () => {
+        expect(folderPathFromFilePath({
+            boxUUID: 'some-uuid',
+            diskName: 'disk_name',
+            filePath: 'home',
+        })).toEqual('some-uuid:/disk_name/home');
+    });
+
     it('filename from file path', () => {
         expect(filenameFromFilePath('/home/user/foo/bar.txt')).toEqual('bar.txt');
     });
 
     it('filename from file path (root)', () => {
         expect(filenameFromFilePath('/file.txt')).toEqual('file.txt');
+    });
+
+    it('filename from file path (no slashes)', () => {
+        expect(filenameFromFilePath('file.txt')).toEqual('file.txt');
     });
 });

@@ -9,7 +9,7 @@ import {
 } from '../shared';
 import { makeBoxRequestHeaders } from './shared';
 
-class FolderResponse extends SuccessResponse {
+export class FolderResponse extends SuccessResponse {
     /**
      *
      * @return {{path: string, nodes: Array<{nodeType: 'folder' | 'file' | 'unknown', name: string}>}}
@@ -46,7 +46,7 @@ export async function getFolder({
     });
 
     // noinspection JSUnresolvedVariable
-    errorResponseOr(
+    return errorResponseOr(
         response,
         data => new FolderResponse({
             path: data.path,

@@ -1,4 +1,4 @@
-class APIResponse {
+export class APIResponse {
     constructor(data = null) {
         this._data = data;
     }
@@ -40,13 +40,32 @@ export class ErrorResponse extends APIResponse {
     }
 }
 
+export const API_STATUS = {
+    OK: 'ok',
+    ERROR: 'error',
+};
+
+/**
+ *
+ * @param {string} status
+ * @return {boolean}
+ */
+export const isOkApiResponseStatus = status => status === API_STATUS.OK;
+
+/**
+ *
+ * @param {string} status
+ * @return {boolean}
+ */
+export const isErrorApiResponseStatus = status => status === API_STATUS.ERROR;
+
 /**
  *
  * @param {{status: 'ok' | 'error', data: any}} apiResponse
  * @return {SuccessResponse | ErrorResponse}
  */
 export function errorResponseOrDefault(apiResponse) {
-    if (apiResponse?.status === 'error') {
+    if (isErrorApiResponseStatus(apiResponse?.status)) {
         return new ErrorResponse(apiResponse.data);
     } else {
         return new SuccessResponse();
@@ -60,7 +79,7 @@ export function errorResponseOrDefault(apiResponse) {
  * @return {SuccessResponse | ErrorResponse}
  */
 export function errorResponseOr(apiResponse, successResponseConstructor) {
-    if (apiResponse?.status === 'error') {
+    if (isErrorApiResponseStatus(apiResponse?.status)) {
         return new ErrorResponse(apiResponse.data);
     } else {
         return successResponseConstructor(apiResponse?.data);

@@ -1,7 +1,7 @@
 import { SuccessResponse, GET, errorResponseOr } from '../shared';
 import { makeBoxRequestHeaders } from './shared';
 
-class DisksResponse extends SuccessResponse {
+export class DisksResponse extends SuccessResponse {
     /**
      *
      * @return {{disks: Array<string>}}

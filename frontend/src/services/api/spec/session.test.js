@@ -1,36 +1,97 @@
-import { createSession, getSession, deleteSession } from '../session';
-import * as shared from '../../shared';
+import {createSession, getSession, deleteSession, SessionResponse} from '../session';
+import * as request from '../../shared/request';
+import { API_STATUS, ErrorResponse, SuccessResponse } from '../../shared';
 
-jest.mock('../../shared');
+jest.mock('../../shared/request');
 
-describe('session tests', () => {
-    it('create session test', async () => {
-        const d = {mail: 'mail@ya.ru', password: 'some-password'};
+describe('session api tests', () => {
+    it('create session success', async () => {
+        const r = { hash: 'some-hash' };
+        const d = { mail: 'mail@ya.ru', password: 'some-password' };
+        // noinspection JSValidateTypes
+        request.POST = jest.fn().mockResolvedValue({
+            status: API_STATUS.OK,
+            data: r,
+        });
 
-        await createSession(d);
+        const res = await createSession(d);
 
-        expect(shared.POST).toBeCalledWith({
+        expect(request.POST).toBeCalledWith({
             path: 'session',
             body: d,
         });
-        expect(shared.errorResponseOr).toBeCalled();
+        expect(res).toBeInstanceOf(SessionResponse);
+        expect(res.isOk()).toBeTruthy();
+        expect(res.data()).toEqual(r);
     });
 
-    it('get session test', async () => {
-        await getSession();
+    it('create session error', async () => {
+        const d = { mail: 'mail@ya.ru', password: 'some-password' };
+        // noinspection JSValidateTypes
+        request.POST = jest.fn().mockResolvedValue({
+            status: API_STATUS.ERROR,
+            data: 'some-error',
+        });
 
-        expect(shared.GET).toBeCalledWith({
+        const res = await createSession(d);
+
+        expect(request.POST).toBeCalledWith({
+            path: 'session',
+            body: d,
+        });
+        expect(res).toBeInstanceOf(ErrorResponse);
+        expect(res.isOk()).toBeFalsy();
+        expect(res.data()).toEqual('some-error');
+    });
+
+    it('get session success', async () => {
+        const r = { hash: 'some-hash' };
+        // noinspection JSValidateTypes
+        request.GET = jest.fn().mockResolvedValue({
+            status: API_STATUS.OK,
+            data: r,
+        });
+
+        const res = await getSession();
+
+        expect(request.GET).toBeCalledWith({
             path: 'session',
         });
-        expect(shared.errorResponseOr).toBeCalled();
+        expect(res).toBeInstanceOf(SessionResponse);
+        expect(res.isOk()).toBeTruthy();
+        expect(res.data()).toEqual(r);
+    });
+
+    it('get session error', async () => {
+        // noinspection JSValidateTypes
+        request.GET = jest.fn().mockResolvedValue({
+            status: API_STATUS.ERROR,
+            data: 'some-error',
+        });
+
+        const res = await getSession();
+
+        expect(request.GET).toBeCalledWith({
+            path: 'session',
+        });
+        expect(res).toBeInstanceOf(ErrorResponse);
+        expect(res.isOk()).toBeFalsy();
+        expect(res.data()).toEqual('some-error');
     });
 
     it('delete session test', async () => {
-        await deleteSession();
+        // noinspection JSValidateTypes
+        request.DELETE = jest.fn().mockResolvedValue({
+            status: API_STATUS.OK,
+        });
 
-        expect(shared.DELETE).toBeCalledWith({
+        const res = await deleteSession();
+
+        expect(request.DELETE).toBeCalledWith({
             path: 'session',
         });
-        expect(shared.errorResponseOrDefault).toBeCalled();
+        expect(res).toBeInstanceOf(SuccessResponse);
+        expect(res.isOk()).toBeTruthy();
+        expect(res.data()).toBeNull();
     });
 });

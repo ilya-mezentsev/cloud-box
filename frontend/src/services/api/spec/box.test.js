@@ -1,27 +1,69 @@
-import { fetchBoxes, bindBox } from '../box';
-import * as shared from '../../shared';
+import { fetchBoxes, bindBox, AccountBoxesResponse } from '../box';
+import * as request from '../../shared/request';
+import { API_STATUS, ErrorResponse, SuccessResponse } from '../../shared';
 
-jest.mock('../../shared');
+jest.mock('../../shared/request');
 
 describe('box api tests', () => {
-    it('check fetchBoxes', async () => {
-        await fetchBoxes('some-hash');
+    it('fetch boxes success', async () => {
+        const d = {
+            tunnel_domain: 'www.google.com',
+            uuid: 'some-uuid',
+            alias: 'alias',
+        };
+        // noinspection JSValidateTypes
+        request.GET = jest.fn().mockResolvedValue({
+            status: API_STATUS.OK,
+            data: [ d ],
+        });
 
-        expect(shared.GET).toBeCalledWith({
+        const res = await fetchBoxes('some-hash');
+
+        expect(request.GET).toBeCalledWith({
             path: 'boxes/some-hash',
         });
-        expect(shared.errorResponseOr).toBeCalled();
+        expect(res).toBeInstanceOf(AccountBoxesResponse);
+        expect(res.isOk()).toBeTruthy();
+        expect(res.data()).toEqual([
+            {
+                tunnelDomain: d.tunnel_domain,
+                uuid: d.uuid,
+                alias: d.alias,
+            },
+        ]);
     });
 
-    it('check bindBox', async () => {
+    it('fetch boxes error', async () => {
+        // noinspection JSValidateTypes
+        request.GET = jest.fn().mockResolvedValue({
+            status: API_STATUS.ERROR,
+            data: 'some-error',
+        });
+
+        const res = await fetchBoxes('some-hash');
+
+        expect(request.GET).toBeCalledWith({
+            path: 'boxes/some-hash',
+        });
+        expect(res).toBeInstanceOf(ErrorResponse);
+        expect(res.isOk()).toBeFalsy();
+        expect(res.data()).toEqual('some-error');
+    });
+
+    it('bind box success', async () => {
         const d = {
             accountHash: 'some-hash',
             boxUUID: 'some-uuid',
             alias: 'alias',
         };
-        await bindBox(d);
+        // noinspection JSValidateTypes
+        request.POST = jest.fn().mockResolvedValue({
+            status: API_STATUS.OK
+        });
 
-        expect(shared.POST).toBeCalledWith({
+        const res = await bindBox(d);
+
+        expect(request.POST).toBeCalledWith({
             path: 'box',
             body: {
                 account_hash: d.accountHash,
@@ -29,6 +71,35 @@ describe('box api tests', () => {
                 alias: d.alias,
             },
         });
-        expect(shared.errorResponseOrDefault).toBeCalled();
+        expect(res).toBeInstanceOf(SuccessResponse);
+        expect(res.isOk()).toBeTruthy();
+        expect(res.data()).toBeNull();
+    });
+
+    it('bind box error', async () => {
+        const d = {
+            accountHash: 'some-hash',
+            boxUUID: 'some-uuid',
+            alias: 'alias',
+        };
+        // noinspection JSValidateTypes
+        request.POST = jest.fn().mockResolvedValue({
+            status: API_STATUS.ERROR,
+            data: 'some-error'
+        });
+
+        const res = await bindBox(d);
+
+        expect(request.POST).toBeCalledWith({
+            path: 'box',
+            body: {
+                account_hash: d.accountHash,
+                uuid: d.boxUUID,
+                alias: d.alias,
+            },
+        });
+        expect(res).toBeInstanceOf(ErrorResponse);
+        expect(res.isOk()).toBeFalsy();
+        expect(res.data()).toEqual('some-error');
     });
 });
