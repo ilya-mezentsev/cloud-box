@@ -1,14 +1,15 @@
 import { bindActionCreators } from 'redux';
 import { signIn } from '../../store/session/actions';
+import Button from '@material-ui/core/Button';
 
 export function SignIn(props) {
     return (
         <>
-            <button
+            <Button variant="contained" color="primary"
                 onClick={() => props.signInAction({ mail: 'some@mail.ru', password: 'some-password' })}
             >
                 Try sign in
-            </button>
+            </Button>
             {props.error && alert(JSON.stringify(props.error))}
         </>
     )
